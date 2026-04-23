@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-comp-allmsisdn-deployment
+  namespace: ms-middleware
+  labels:
+    event: ms-comp-allmsisdn
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      event: ms-comp-allmsisdn
+  template:
+    metadata:
+      labels:
+        event: ms-comp-allmsisdn
+    spec:
+      containers:
+        - 
+          image: 10.112.230.33:443/telefonica/g-microservicios/ms-comp-allmsisdn:1.0.0-qa
+          name: ms-comp-allmsisdn
+          imagePullPolicy: Always
+          securityContext:
+            runAsGroup: 1000
+          env:
+          - name: TZ
+            value: America/Bogota
+          - name: JAVA_OPTS
+            value: '-Dlog4j2.formatMsgNoLookups=true'
+          resources:
+            limits:
+              memory: 1024Mi
+            requests:
+              memory: 128Mi
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/ms/ms-comp-allmsisdn/application.properties
+              subPath: application.properties      
+            - name: ms-logs-volume
+              mountPath: /opt/log/
+            - name: config-volume-log
+              mountPath: /opt/ms/ms-comp-allmsisdn/log4j2.xml
+              subPath: log4j2.xml
+      volumes:
+        - name: ms-logs-volume
+          hostPath:
+            path: /datos/logs/ms/
+        - name: config-volume
+          configMap:
+            name: ms-comp-allmsisdn-configmap
+        - name: config-volume-log
+          configMap:
+            name: ms-comp-allmsisdn-configmap-log
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-comp-allmsisdn-service
+  namespace: ms-middleware
+  labels:
+    event: ms-comp-allmsisdn
+spec:
+  ports:
+    -
+      port: 8080
+      targetPort: 8080
+  selector:
+    event: ms-comp-allmsisdn
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ms-comp-allmsisdn-hpa
+  namespace: ms-middleware
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ms-comp-allmsisdn-deployment
+  minReplicas: 2
+  maxReplicas: 2
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70
+

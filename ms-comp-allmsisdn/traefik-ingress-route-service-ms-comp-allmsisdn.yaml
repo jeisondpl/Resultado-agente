@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingressroute-https-ms-comp-allmsisdn
+  namespace: ms-middleware
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: PathPrefix(`/allmsisdn/AllMsisdn`)
+    kind: Rule
+    services:
+    - name: ms-comp-allmsisdn-service
+      port: 8080
+    middlewares:
+      - name: ms-middleware
+  tls:
+    certResolver: default
