@@ -1,16 +1,10 @@
-/**
- * 
- */
 package ec.otecel.allmsisdn.constants;
 
 public class MsConstants {
 
-	
 	public static final String SERVICE = "ms-comp-allmsisdn";
 	public static final String METHOD1 = "AllMsisdn";
-	
 	public static final String ADD = "addPayment";
-	
 	public static final String UNEXPECTED_ERROR_VALUES_ENTERED = "Error inesperado con los valores ingresados ";
 	public static final int RESULT_CODE_INTEGER_OK = 0;
 	public static final String RESULT_CODE_INTEGRATION_OK = "0000";
@@ -32,7 +26,6 @@ public class MsConstants {
 	public static final String SERVICE_NAME= "getExceptionMessageByCodeByMethod";
 	public static final String OPERATION_NAME_GET_PARAMETERS_BY_GROUP = "getParametersByGroup";
 	public static final String PAYMENTEZ_CORE_DB ="ms-comp-allmsisdn";
-	
 	public static final String SERVICE_POSTGRESS_REPOSITORY = "DBPostgresRepository";
 	public static final String OPERATION_NAME_GET_PARAMETERS = "getParameters";
 	public static final String AUTHORIZATION = "AUTHORIZATION";
@@ -50,10 +43,12 @@ public class MsConstants {
 	public static final String EXCEPTION_CODE_1001 = "SVC1001";
 	public static final String CHAR_E_ERROR = "E";
 	public static final String T_OPEN_API = "T-OpenAPI";
-	
-	
+	public static final String MS_SERVICE_NETCRACKER = "netcracker-rdb";
+	public static final String METHOD_NAME_ALL_MSISDN = "allMsisdn";
+	public static final String MS_SERVICE_REDIS = "redis-cache";
+	public static final String METHOD_NAME_SAVE_REDIS = "saveRedis";
+	public static final String METHOD_NAME_RECOVER_REDIS = "getDataRedis";
 	private MsConstants() {
 		// Se deja vacío.
 	}
-
 }

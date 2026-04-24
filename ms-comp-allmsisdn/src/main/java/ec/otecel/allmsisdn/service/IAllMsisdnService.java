@@ -6,5 +6,5 @@ import ec.otecel.common.model.globalintegration.header.HeaderInType;
 import ec.otecel.component.error.exception.ComponentException;
 
 public interface IAllMsisdnService {
-    AllMsisdnResponseDTO allMsisdn(HeaderInType h, AllMsisdnRequestDTO req) throws ComponentException;
+    AllMsisdnResponseDTO allMsisdn(HeaderInType headerReq, AllMsisdnRequestDTO request) throws ComponentException;
 }

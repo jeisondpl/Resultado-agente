@@ -1,5 +1,16 @@
 package ec.otecel.allmsisdn.adapter;
 
+import java.util.Map;
+import java.util.UUID;
+
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import ec.otecel.allmsisdn.constants.MsConstants;
 import ec.otecel.allmsisdn.dto.integration.RecoverRedisRequestDTO;
 import ec.otecel.allmsisdn.dto.integration.RecoverRedisResponseDTO;
@@ -7,103 +18,199 @@ import ec.otecel.allmsisdn.dto.integration.SaveRedisRequestDTO;
 import ec.otecel.allmsisdn.dto.integration.SaveRedisResponseDTO;
 import ec.otecel.allmsisdn.util.BasicOperationAdapter;
 import ec.otecel.common.model.commontypes.ErrorCodeType;
+import ec.otecel.common.model.commontypes.LayerType;
+import ec.otecel.common.model.commontypes.LoggerAppType;
 import ec.otecel.common.model.globalintegration.header.HeaderInType;
+import ec.otecel.common.model.rest.fault.MessageFaultDTO;
 import ec.otecel.component.error.exception.ComponentException;
+import ec.otecel.component.error.util.ErrorUtil;
 import ec.otecel.component.logs.config.LoggerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import ec.otecel.component.requester.base.BaseRequester;
+import ec.otecel.component.requester.model.RestResponse;
+import ec.otecel.component.requester.util.RestUtil;
 
 @Component
 public class RedisAdapter {
 
-    @Autowired
     private LoggerService loggerService;
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    @Value("${telefonica.api.redis.host:backendpre.movistar.com.ec}")
+    @Value("${otecel.api.redis.host:localhost}")
     private String redisHost;
 
-    @Value("${telefonica.api.redis.port:32101}")
-    private int redisPort;
+    @Value("${otecel.api.redis.port:8080}")
+    private String redisPort;
 
-    @Value("${telefonica.api.redis.path.save:/comp/redis/v2/saveRedisTimeToLive}")
+    @Value("${otecel.api.redis.path.save:/comp/redis/v2/saveRedisTimeToLive}")
     private String savePath;
 
-    @Value("${telefonica.api.redis.path.recover:/comp/redis/v2/getDataRedis}")
+    @Value("${otecel.api.redis.path.recover:/comp/redis/v2/getDataRedis}")
     private String recoverPath;
 
-    @Value("${telefonica.api.redis.https:true}")
-    private boolean useHttps;
+    @Value("${otecel.api.redis.timeout:20000}")
+    private Integer redisTimeOut;
 
-    @Value("${otecel.api.token:Basic YWRtaW46c1kzNU1Yei56dVg=}")
-    private String authToken;
+    @Value("${otecel.api.internal.https:false}")
+    private boolean apiHttps;
 
-    public SaveRedisResponseDTO saveRedis(HeaderInType headerIn, SaveRedisRequestDTO request)
-            throws ComponentException {
-        return new BasicOperationAdapter<SaveRedisResponseDTO, SaveRedisRequestDTO>(headerIn,
-                new SaveRedisResponseDTO(), request) {
-            @Override
-            public SaveRedisResponseDTO process(HeaderInType h, SaveRedisRequestDTO r)
-                    throws ComponentException {
-                try {
-                    String url = (useHttps ? "https" : "http") + "://" + redisHost + ":" + redisPort + savePath;
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_JSON);
-                    headers.set("Authorization", authToken);
-                    HttpEntity<SaveRedisRequestDTO> entity = new HttpEntity<>(r, headers);
-                    ResponseEntity<SaveRedisResponseDTO> resp = restTemplate.exchange(
-                            url, HttpMethod.POST, entity, SaveRedisResponseDTO.class);
-                    if (resp.getBody() == null) {
-                        throw new ComponentException(ErrorCodeType.ERROR_INESPERADO,
-                                "Empty response from Redis save", true,
-                                new String[]{}, getClass().getSimpleName());
-                    }
-                    return resp.getBody();
-                } catch (ComponentException ce) {
-                    throw ce;
-                } catch (Exception e) {
-                    throw new ComponentException(e.getMessage(), e,
-                            ErrorCodeType.ERROR_INESPERADO, true,
-                            new String[]{}, getClass().getSimpleName());
-                }
-            }
-        }.initializer(loggerService)
-         .setCommonInfo(MsConstants.SERVICE, MsConstants.METHOD1, getClass().getSimpleName())
-         .run();
+    @Value("${otecel.api.token:null}")
+    private String basicToken;
+
+    @Autowired
+    public RedisAdapter(LoggerService loggerService) {
+        this.loggerService = loggerService;
     }
 
-    public RecoverRedisResponseDTO getDataRedis(HeaderInType headerIn, RecoverRedisRequestDTO request)
-            throws ComponentException {
-        return new BasicOperationAdapter<RecoverRedisResponseDTO, RecoverRedisRequestDTO>(headerIn,
-                new RecoverRedisResponseDTO(), request) {
-            @Override
-            public RecoverRedisResponseDTO process(HeaderInType h, RecoverRedisRequestDTO r)
-                    throws ComponentException {
-                try {
-                    String url = (useHttps ? "https" : "http") + "://" + redisHost + ":" + redisPort + recoverPath;
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_JSON);
-                    headers.set("Authorization", authToken);
-                    HttpEntity<RecoverRedisRequestDTO> entity = new HttpEntity<>(r, headers);
-                    ResponseEntity<RecoverRedisResponseDTO> resp = restTemplate.exchange(
-                            url, HttpMethod.POST, entity, RecoverRedisResponseDTO.class);
-                    return resp.getBody() != null ? resp.getBody() : new RecoverRedisResponseDTO();
-                } catch (Exception e) {
-                    // No romper el flujo si el cache no responde — devolver vacío para que
-                    // el service haga fallback a NetCracker.
-                    return new RecoverRedisResponseDTO();
+    public SaveRedisResponseDTO saveRedis(HeaderInType headerIn, SaveRedisRequestDTO request,
+            String initialStep, String finalStep) throws ComponentException {
+
+        String message = "consumo del legado Redis saveRedis";
+        String step = "PASO " + initialStep + " - " + finalStep + " LEGADO: ";
+        String stepError = "PASO " + initialStep + " - " + finalStep + " LEGADO_ERROR: ";
+
+        try {
+            return new BasicOperationAdapter<SaveRedisResponseDTO, SaveRedisRequestDTO>(
+                    headerIn, new SaveRedisResponseDTO(), request) {
+
+                public SaveRedisResponseDTO process(HeaderInType headerIn, SaveRedisRequestDTO request)
+                        throws ComponentException {
+
+                    Map<String, String> headerInMap = RestUtil.objectToMap(headerIn);
+                    if (apiHttps) {
+                        headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
+                    }
+
+                    BaseRequester requester = new BaseRequester(redisHost, redisPort, savePath,
+                            HttpMethod.POST.name(), request, headerInMap);
+                    requester.setTimeout(redisTimeOut);
+                    requester.setHttps(apiHttps);
+
+                    RestResponse<SaveRedisResponseDTO, MessageFaultDTO> response = null;
+
+                    try {
+                        loggerService.logApp(uUidTransaction, Strings.EMPTY, uUidTransaction,
+                                LoggerAppType.DSI_MCI_BODY_AUDIT_REQUEST.toString(),
+                                step + "Se inicia " + message,
+                                ErrorUtil.createErrorLocation(this.getClass().getSimpleName(),
+                                        LayerType.INTEGRATION));
+
+                        response = requester.run(SaveRedisResponseDTO.class, MessageFaultDTO.class, 5000);
+
+                        loggerService.logApp(uUidTransaction, Strings.EMPTY, uUidTransaction,
+                                LoggerAppType.DSI_MCI_BODY_AUDIT_REQUEST.toString(),
+                                step + "Se realiza " + message + ", de manera correcta",
+                                ErrorUtil.createErrorLocation(this.getClass().getSimpleName(),
+                                        LayerType.INTEGRATION));
+
+                        if (response.getCode() == 404) {
+                            throw new ComponentException(ErrorCodeType.ERROR_SIN_RESULTADOS,
+                                    response.getErrorResponse().getAppDetail().getExceptionAppCause(),
+                                    true, new String[]{request.toString()},
+                                    ErrorUtil.createErrorLocation(RedisAdapter.class.getSimpleName(),
+                                            LayerType.INTEGRATION));
+                        } else if (response.getCode() != 200) {
+                            throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL,
+                                    response.getErrorResponse().getExceptionMessage(),
+                                    true, new String[]{request.toString()},
+                                    ErrorUtil.createErrorLocation(RedisAdapter.class.getSimpleName(),
+                                            LayerType.INTEGRATION));
+                        }
+                    } catch (JsonProcessingException e) {
+                        throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL, true,
+                                new String[]{MsConstants.RESULT_CODE_ERROR
+                                        + redisHost + ":" + redisPort + "/" + savePath},
+                                this.getClass().getSimpleName());
+                    }
+
+                    return response.getBodyResponse();
                 }
-            }
-        }.initializer(loggerService)
-         .setCommonInfo(MsConstants.SERVICE, MsConstants.METHOD1, getClass().getSimpleName())
-         .run();
+            }.initializer(loggerService)
+             .setCommonInfo(MsConstants.MS_SERVICE_REDIS, MsConstants.METHOD_NAME_SAVE_REDIS,
+                     RedisAdapter.class.getSimpleName())
+             .run();
+
+        } catch (Exception e) {
+            loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY,
+                    UUID.randomUUID().toString(),
+                    LoggerAppType.DSI_MCI_BODY_AUDIT_RESPONSE.toString(),
+                    stepError + "Se genera error en el " + message + MsConstants.RESPONSE + e.toString(),
+                    ErrorUtil.createErrorLocation(this.getClass().getSimpleName(), LayerType.INTEGRATION));
+            throw e;
+        }
+    }
+
+    public RecoverRedisResponseDTO getDataRedis(HeaderInType headerIn, RecoverRedisRequestDTO request,
+            String initialStep, String finalStep) throws ComponentException {
+
+        String message = "consumo del legado Redis getDataRedis";
+        String step = "PASO " + initialStep + " - " + finalStep + " LEGADO: ";
+        String stepError = "PASO " + initialStep + " - " + finalStep + " LEGADO_ERROR: ";
+
+        try {
+            return new BasicOperationAdapter<RecoverRedisResponseDTO, RecoverRedisRequestDTO>(
+                    headerIn, new RecoverRedisResponseDTO(), request) {
+
+                public RecoverRedisResponseDTO process(HeaderInType headerIn, RecoverRedisRequestDTO request)
+                        throws ComponentException {
+
+                    Map<String, String> headerInMap = RestUtil.objectToMap(headerIn);
+                    if (apiHttps) {
+                        headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
+                    }
+
+                    BaseRequester requester = new BaseRequester(redisHost, redisPort, recoverPath,
+                            HttpMethod.POST.name(), request, headerInMap);
+                    requester.setTimeout(redisTimeOut);
+                    requester.setHttps(apiHttps);
+
+                    RestResponse<RecoverRedisResponseDTO, MessageFaultDTO> response = null;
+
+                    try {
+                        loggerService.logApp(uUidTransaction, Strings.EMPTY, uUidTransaction,
+                                LoggerAppType.DSI_MCI_BODY_AUDIT_REQUEST.toString(),
+                                step + "Se inicia " + message,
+                                ErrorUtil.createErrorLocation(this.getClass().getSimpleName(),
+                                        LayerType.INTEGRATION));
+
+                        response = requester.run(RecoverRedisResponseDTO.class, MessageFaultDTO.class, 5000);
+
+                        loggerService.logApp(uUidTransaction, Strings.EMPTY, uUidTransaction,
+                                LoggerAppType.DSI_MCI_BODY_AUDIT_REQUEST.toString(),
+                                step + "Se realiza " + message + ", de manera correcta",
+                                ErrorUtil.createErrorLocation(this.getClass().getSimpleName(),
+                                        LayerType.INTEGRATION));
+
+                        // En getDataRedis, un 404 = cache miss → devolver vacío para que el
+                        // service haga fallback a NetCracker. NO lanzar excepción.
+                        if (response.getCode() == 404) {
+                            return new RecoverRedisResponseDTO();
+                        } else if (response.getCode() != 200) {
+                            throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL,
+                                    response.getErrorResponse().getExceptionMessage(),
+                                    true, new String[]{request.toString()},
+                                    ErrorUtil.createErrorLocation(RedisAdapter.class.getSimpleName(),
+                                            LayerType.INTEGRATION));
+                        }
+                    } catch (JsonProcessingException e) {
+                        throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL, true,
+                                new String[]{MsConstants.RESULT_CODE_ERROR
+                                        + redisHost + ":" + redisPort + "/" + recoverPath},
+                                this.getClass().getSimpleName());
+                    }
+
+                    return response.getBodyResponse();
+                }
+            }.initializer(loggerService)
+             .setCommonInfo(MsConstants.MS_SERVICE_REDIS, MsConstants.METHOD_NAME_RECOVER_REDIS,
+                     RedisAdapter.class.getSimpleName())
+             .run();
+
+        } catch (Exception e) {
+            loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY,
+                    UUID.randomUUID().toString(),
+                    LoggerAppType.DSI_MCI_BODY_AUDIT_RESPONSE.toString(),
+                    stepError + "Se genera error en el " + message + MsConstants.RESPONSE + e.toString(),
+                    ErrorUtil.createErrorLocation(this.getClass().getSimpleName(), LayerType.INTEGRATION));
+            throw e;
+        }
     }
 }
