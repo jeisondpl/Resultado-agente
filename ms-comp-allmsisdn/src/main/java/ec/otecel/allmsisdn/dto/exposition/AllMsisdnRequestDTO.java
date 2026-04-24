@@ -28,7 +28,5 @@ public class AllMsisdnRequestDTO {
     private String listCCPlan;
     private String filterPlan;
     private List<String> subscriptionType;
-
-    @Pattern(regexp = "^[0-9]+$")
     private Integer timeToLive;
 }
