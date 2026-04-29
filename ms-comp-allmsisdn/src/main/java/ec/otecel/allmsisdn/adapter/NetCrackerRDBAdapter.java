@@ -32,22 +32,22 @@ public class NetCrackerRDBAdapter {
 
     private LoggerService loggerService;
 
-    @Value("${otecel.api.rdb.host:backendpre.movistar.com.ec}")
+    @Value("${otecel.api.rdb.host:null}")
     private String apiHost;
 
-    @Value("${otecel.api.rdb.port:32101}")
+    @Value("${otecel.api.rdb.port:null}")
     private String apiPort;
 
-    @Value("${otecel.api.rdb.path.all.msisdn:/netcrackerrdb/allMsisdn}")
+    @Value("${otecel.api.rdb.path.all.msisdn:null}")
     private String apiPath;
 
-    @Value("${otecel.api.rdb.timeout:40000}")
+    @Value("${otecel.api.rdb.timeout:null}")
     private Integer apiTimeOut;
 
-    @Value("${otecel.api.internal.https:true}")
+    @Value("${otecel.api.internal.https:null}")
     private boolean apiHttps;
 
-    @Value("${otecel.api.token:}")
+    @Value("${otecel.api.token:null}")
     private String basicToken;
 
     @Autowired
@@ -74,8 +74,9 @@ public class NetCrackerRDBAdapter {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
+                    Map<String, Object> body = RestUtil.objectToMap(request);
                     BaseRequester requester = new BaseRequester(apiHost, apiPort, apiPath,
-                            HttpMethod.POST.name(), request, headerInMap);
+                            HttpMethod.POST.name(), body, headerInMap);
                     requester.setTimeout(apiTimeOut);
                     requester.setHttps(apiHttps);
 

@@ -79,8 +79,9 @@ public class RedisAdapter {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
+                    Map<String, Object> body = RestUtil.objectToMap(request);
                     BaseRequester requester = new BaseRequester(redisHost, redisPort, savePath,
-                            HttpMethod.POST.name(), request, headerInMap);
+                            HttpMethod.POST.name(), body, headerInMap);
                     requester.setTimeout(redisTimeOut);
                     requester.setHttps(apiHttps);
 
@@ -157,8 +158,9 @@ public class RedisAdapter {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
+                    Map<String, Object> body = RestUtil.objectToMap(request);
                     BaseRequester requester = new BaseRequester(redisHost, redisPort, recoverPath,
-                            HttpMethod.POST.name(), request, headerInMap);
+                            HttpMethod.POST.name(), body, headerInMap);
                     requester.setTimeout(redisTimeOut);
                     requester.setHttps(apiHttps);
 

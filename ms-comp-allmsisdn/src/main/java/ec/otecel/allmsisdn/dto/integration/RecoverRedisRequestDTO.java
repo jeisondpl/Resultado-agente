@@ -8,5 +8,8 @@ import lombok.ToString;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class RecoverRedisRequestDTO {
+    /**
+     * Llave para consulta en Redis
+     */
     private String key;
 }

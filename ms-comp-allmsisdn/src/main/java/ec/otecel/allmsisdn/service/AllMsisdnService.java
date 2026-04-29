@@ -48,21 +48,21 @@ public class AllMsisdnService implements IAllMsisdnService {
                 }
 
                 // 3. Fallback a NetCrackerRDB
-                AllMsisdnResponseDTO response = netCrackerRDBAdapter.allMsisdn(headerIn, request);
+                AllMsisdnResponseDTO response = netCrackerRDBAdapter.allMsisdn(headerIn, request, "2", "3");
                 if (response == null) {
                     throw new ComponentException(ErrorCodeType.ERROR_INESPERADO, "No response from NetCracker", true, new String[]{}, getClass().getSimpleName());
                 }
 
                 // 4. Guardar en cache (no romper si falla)
                 try {
-                    redisAdapter.saveRedis(headerIn, new SaveRedisRequestDTO(key, allMsisdnResponseToJson(response), request.getTimeToLive()));
+                    redisAdapter.saveRedis(headerIn, new SaveRedisRequestDTO(key, allMsisdnResponseToJson(response), Integer.valueOf(req.getTimeToLive())));
                 } catch (Exception e) {
                     loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY, UUID.randomUUID().toString(), LoggerAppType.DSI_AUDIT_BODY_ERROR_HANDLER.toString(), "Cache save failed: " + e.getMessage(), getClass().getSimpleName());
                 }
                 return response;
             }
         }.initializer(loggerService)
-         .setCommonInfo(MsConstants.SERVICE, MsConstants.METHOD1, getClass().getSimpleName())
+         .setCommonInfo(MsConstants.SERVICE, MsConstants.METHOD_NAME_ALL_MSISDN, getClass().getSimpleName())
          .run();
     }
 
