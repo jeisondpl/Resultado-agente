@@ -41,15 +41,15 @@ public class AllMsisdnService implements IAllMsisdnService {
                 final String finalStep = "3";
                 String key = createKey(headerIn.getOriginator(), request);
                 RecoverRedisResponseDTO cached = redisAdapter.getDataRedis(headerIn, new RecoverRedisRequestDTO(key), "1", finalStep);
-                if (cached != null && cached.getValue() != null && !cached.getValue().isEmpty()) {
-                    return jsonToAllMsisdnResponse(cached.getValue());
+                if (cached != null && cached.getCode() != null && cached.getCode().equals("0000")) {
+                    return jsonToAllMsisdnResponse(cached.getJson());
                 }
                 AllMsisdnResponseDTO response = netCrackerRDBAdapter.allMsisdn(headerIn, request, "2", finalStep);
                 if (response == null) {
                     throw new ComponentException(ErrorCodeType.ERROR_INESPERADO, "No response from NetCracker", true, new String[]{}, getClass().getSimpleName());
                 }
                 try {
-                    redisAdapter.saveRedis(headerIn, new SaveRedisRequestDTO(key, allMsisdnResponseToJson(response), request.getTimeToLive()), "3", finalStep);
+                    redisAdapter.saveRedis(headerIn, new SaveRedisRequestDTO(key, allMsisdnResponseToJson(response), Integer.valueOf(request.getTimeToLive())), "3", finalStep);
                 } catch (Exception e) {
                     loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY, UUID.randomUUID().toString(), LoggerAppType.DSI_AUDIT_BODY_ERROR_HANDLER.toString(), "Cache save failed: " + e.getMessage(), getClass().getSimpleName());
                 }
