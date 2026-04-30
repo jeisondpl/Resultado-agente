@@ -52,7 +52,7 @@ public class RedisAdapter {
     @Value("${otecel.api.internal.https:false}")
     private boolean apiHttps;
 
-    @Value("${otecel.api.token:null}")
+    @Value("${otecel.api.token:Basic YWRtaW46c1kzNU1Yei56dVg=}")
     private String basicToken;
 
     @Autowired

@@ -38,26 +38,20 @@ public class AllMsisdnService implements IAllMsisdnService {
         return new BasicOperationService<AllMsisdnResponseDTO, AllMsisdnRequestDTO>(h, new AllMsisdnResponseDTO(), req) {
             @Override
             public AllMsisdnResponseDTO process(HeaderInType headerIn, AllMsisdnRequestDTO request) throws ComponentException {
-                // 1. Construir key con originator + atributos no nulos
+                final String finalStep = "3";
                 String key = createKey(headerIn.getOriginator(), request);
-
-                // 2. Intentar recuperar de Redis
-                RecoverRedisResponseDTO cached = redisAdapter.getDataRedis(headerIn, new RecoverRedisRequestDTO(key));
+                RecoverRedisResponseDTO cached = redisAdapter.getDataRedis(headerIn, new RecoverRedisRequestDTO(key), "1", finalStep);
                 if (cached != null && cached.getJson() != null && !cached.getJson().isEmpty()) {
                     return jsonToAllMsisdnResponse(cached.getJson());
                 }
-
-                // 3. Fallback a NetCrackerRDB
-                AllMsisdnResponseDTO response = netCrackerRDBAdapter.allMsisdn(headerIn, request, "2", "3");
+                AllMsisdnResponseDTO response = netCrackerRDBAdapter.allMsisdn(headerIn, request, "2", finalStep);
                 if (response == null) {
-                    throw new ComponentException(ErrorCodeType.ERROR_INESPERADO, "No response from NetCracker", true, new String[]{}, getClass().getSimpleName());
+                    throw new ComponentException(ErrorCodeType.ERROR_INESPERADO, "Sin respuesta de NetCracker", true, new String[]{}, getClass().getSimpleName());
                 }
-
-                // 4. Guardar en cache (no romper si falla)
                 try {
-                    redisAdapter.saveRedis(headerIn, new SaveRedisRequestDTO(key, allMsisdnResponseToJson(response), Integer.valueOf(req.getTimeToLive())));
+                    redisAdapter.saveRedis(headerIn, new SaveRedisRequestDTO(key, allMsisdnResponseToJson(response), Integer.valueOf(request.getTimeToLive())), "3", finalStep);
                 } catch (Exception e) {
-                    loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY, UUID.randomUUID().toString(), LoggerAppType.DSI_AUDIT_BODY_ERROR_HANDLER.toString(), "Cache save failed: " + e.getMessage(), getClass().getSimpleName());
+                    loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY, UUID.randomUUID().toString(), LoggerAppType.DSI_MCI_BODY_AUDIT_RESPONSE.toString(), "Error guardando en cache: " + e.getMessage(), getClass().getSimpleName());
                 }
                 return response;
             }
