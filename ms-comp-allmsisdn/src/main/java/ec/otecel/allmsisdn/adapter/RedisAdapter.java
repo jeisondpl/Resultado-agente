@@ -52,7 +52,7 @@ public class RedisAdapter {
     @Value("${otecel.api.internal.https:false}")
     private boolean apiHttps;
 
-    @Value("${otecel.api.token:Basic YWRtaW46c1kzNU1Yei56dVg=}")
+    @Value("${otecel.api.token:default_value}")
     private String basicToken;
 
     @Autowired
@@ -79,9 +79,8 @@ public class RedisAdapter {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
-                    Map<String, Object> body = RestUtil.objectToMap(request);
                     BaseRequester requester = new BaseRequester(redisHost, redisPort, savePath,
-                            HttpMethod.POST.name(), body, headerInMap);
+                            HttpMethod.POST.name(), request, headerInMap);
                     requester.setTimeout(redisTimeOut);
                     requester.setHttps(apiHttps);
 
@@ -158,9 +157,8 @@ public class RedisAdapter {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
-                    Map<String, Object> body = RestUtil.objectToMap(request);
                     BaseRequester requester = new BaseRequester(redisHost, redisPort, recoverPath,
-                            HttpMethod.POST.name(), body, headerInMap);
+                            HttpMethod.POST.name(), request, headerInMap);
                     requester.setTimeout(redisTimeOut);
                     requester.setHttps(apiHttps);
 

@@ -9,6 +9,6 @@ import lombok.ToString;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class SaveRedisRequestDTO {
     private String key;
-    private String json;
+    private String value;
     private Integer timeToLive;
 }

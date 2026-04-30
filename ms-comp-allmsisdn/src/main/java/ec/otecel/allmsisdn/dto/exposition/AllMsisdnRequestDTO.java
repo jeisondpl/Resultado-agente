@@ -2,7 +2,6 @@ package ec.otecel.allmsisdn.dto.exposition;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,17 +16,15 @@ public class AllMsisdnRequestDTO {
      * Validación: solo letras, 1-15 caracteres
      */
     @NotNull(message = "El atributo identifierType es obligatorio")
-    @Size(max = 15, message = "El atributo identifierType debe tener una longitud máxima de 15 caracteres")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "El atributo identifierType debe contener solo letras")
+    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo identifierType debe contener solo letras y tener longitud entre 1 y 15 caracteres")
     private String identifierType;
 
     /**
      * Número identificador
-     * Validación: alfanumérico, 1-50 caracteres
+     * Validación: solo alfanumérico, 1-50 caracteres
      */
     @NotNull(message = "El atributo identifierNumber es obligatorio")
-    @Size(max = 50, message = "El atributo identifierNumber debe tener una longitud máxima de 50 caracteres")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "El atributo identifierNumber debe contener solo letras y números")
+    @Pattern(regexp = "^[a-zA-Z0-9]{1,50}$", message = "El atributo identifierNumber debe contener solo letras y números, longitud entre 1 y 50 caracteres")
     private String identifierNumber;
 
     /**
@@ -35,8 +32,7 @@ public class AllMsisdnRequestDTO {
      * Validación: solo letras, 1-15 caracteres
      */
     @NotNull(message = "El atributo level es obligatorio")
-    @Size(max = 15, message = "El atributo level debe tener una longitud máxima de 15 caracteres")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "El atributo level debe contener solo letras")
+    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo level debe contener solo letras y tener longitud entre 1 y 15 caracteres")
     private String level;
 
     /**
@@ -44,15 +40,14 @@ public class AllMsisdnRequestDTO {
      * Validación: solo números, 1-50 caracteres
      */
     @NotNull(message = "El atributo operatorId es obligatorio")
-    @Size(max = 50, message = "El atributo operatorId debe tener una longitud máxima de 50 caracteres")
-    @Pattern(regexp = "^[0-9]+$", message = "El atributo operatorId debe contener solo números")
+    @Pattern(regexp = "^[0-9]{1,50}$", message = "El atributo operatorId debe contener solo números y tener longitud entre 1 y 50 caracteres")
     private String operatorId;
 
     /**
-     * Plan CC
-     * Validación: opcional, 1-200 caracteres
+     * Plan CC (opcional)
+     * Validación: letras, números y comas, 0-200 caracteres
      */
-    @Size(max = 200, message = "El atributo listCCPlan debe tener una longitud máxima de 200 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9,]{0,200}$", message = "El atributo listCCPlan debe contener solo letras, números y comas, longitud máxima 200 caracteres")
     private String listCCPlan;
 
     /**
@@ -60,21 +55,18 @@ public class AllMsisdnRequestDTO {
      * Validación: solo mayúsculas, 1-10 caracteres
      */
     @NotNull(message = "El atributo filterPlan es obligatorio")
-    @Size(max = 10, message = "El atributo filterPlan debe tener una longitud máxima de 10 caracteres")
-    @Pattern(regexp = "^[A-Z]+$", message = "El atributo filterPlan debe contener solo letras mayúsculas")
+    @Pattern(regexp = "^[A-Z]{1,10}$", message = "El atributo filterPlan debe contener solo letras mayúsculas y tener longitud entre 1 y 10 caracteres")
     private String filterPlan;
 
     /**
-     * Tipo de suscripción
-     * Validación: opcional, lista de textos
+     * Tipo de suscripción (opcional)
      */
     private List<String> subscriptionType;
 
     /**
-     * Tiempo de vida
-     * Validación: opcional, solo números, 1-5 caracteres
+     * Tiempo de vida (opcional)
+     * Validación: solo números, 0-5 caracteres
      */
-    @Size(max = 5, message = "El atributo timeToLive debe tener una longitud máxima de 5 caracteres")
-    @Pattern(regexp = "^[0-9]+$", message = "El atributo timeToLive debe contener solo números")
+    @Pattern(regexp = "^[0-9]{0,5}$", message = "El atributo timeToLive debe contener solo números y tener longitud máxima de 5 caracteres")
     private String timeToLive;
 }

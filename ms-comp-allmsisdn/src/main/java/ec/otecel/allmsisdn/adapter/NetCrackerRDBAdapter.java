@@ -74,9 +74,8 @@ public class NetCrackerRDBAdapter {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
-                    Map<String, Object> body = RestUtil.objectToMap(request);
                     BaseRequester requester = new BaseRequester(apiHost, apiPort, apiPath,
-                            HttpMethod.POST.name(), body, headerInMap);
+                            HttpMethod.POST.name(), request, headerInMap);
                     requester.setTimeout(apiTimeOut);
                     requester.setHttps(apiHttps);
 
