@@ -48,8 +48,9 @@ public class MsConstants {
     public static final String EXCEPTION_CODE_1001 = "SVC1001";
     public static final String CHAR_E_ERROR = "E";
     public static final String T_OPEN_API = "T-OpenAPI";
-    public static final String METHOD1 = "AllMsisdn";
+    public static final String ERROR_INESPERADO = "Error inesperado";
     public static final String PAYMENTEZ_CORE_DB = "ms-comp-allmsisdn";
+    public static final String METHOD1 = "AllMsisdn";
 
 
     private MsConstants() {
