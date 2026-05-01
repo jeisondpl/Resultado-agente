@@ -47,7 +47,7 @@ public class NetCrackerRDBAdapter {
     @Value("${otecel.api.internal.https:true}")
     private boolean apiHttps;
 
-    @Value("${otecel.api.token:}")
+    @Value("${otecel.api.token:Basic YWRtaW46c1kzNU1Yei56dVg=}")
     private String basicToken;
 
     @Autowired

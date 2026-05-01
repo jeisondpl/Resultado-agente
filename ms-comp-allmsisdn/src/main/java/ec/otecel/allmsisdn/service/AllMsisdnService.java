@@ -41,7 +41,7 @@ public class AllMsisdnService implements IAllMsisdnService {
                 final String finalStep = "3";
                 String key = createKey(headerIn.getOriginator(), request);
                 RecoverRedisResponseDTO cached = redisAdapter.getDataRedis(headerIn, new RecoverRedisRequestDTO(key), "1", finalStep);
-                if (cached != null && cached.getJson() != null && !cached.getJson().isEmpty()) {
+                if (cached != null && cached.getJson() != null && cached.getCode().equals("0000")) {
                     return jsonToAllMsisdnResponse(cached.getJson());
                 }
                 AllMsisdnResponseDTO response = netCrackerRDBAdapter.allMsisdn(headerIn, request, "2", finalStep);
