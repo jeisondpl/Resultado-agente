@@ -32,22 +32,22 @@ public class NetCrackerRDBAdapter {
 
     private LoggerService loggerService;
 
-    @Value("${otecel.api.rdb.host:backendpre.movistar.com.ec}")
+    @Value("${otecel.api.rdb.host:default_value}")
     private String apiHost;
 
-    @Value("${otecel.api.rdb.port:32101}")
+    @Value("${otecel.api.rdb.port:default_value}")
     private String apiPort;
 
-    @Value("${otecel.api.rdb.path.all.msisdn:/netcrackerrdb/allMsisdn}")
+    @Value("${otecel.api.rdb.path.all.msisdn:default_value}")
     private String apiPath;
 
-    @Value("${otecel.api.rdb.timeout:40000}")
+    @Value("${otecel.api.rdb.timeout:default_value}")
     private Integer apiTimeOut;
 
-    @Value("${otecel.api.internal.https:true}")
+    @Value("${otecel.api.internal.https:default_value}")
     private boolean apiHttps;
 
-    @Value("${otecel.api.token:}")
+    @Value("${otecel.api.token:default_value}")
     private String basicToken;
 
     @Autowired

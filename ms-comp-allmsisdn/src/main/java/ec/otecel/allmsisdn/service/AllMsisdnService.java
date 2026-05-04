@@ -1,7 +1,7 @@
 package ec.otecel.allmsisdn.service;
 
-import ec.otecel.allmsisdn.adapter.NetCrackerRDBAdapter;
 import ec.otecel.allmsisdn.adapter.RedisAdapter;
+import ec.otecel.allmsisdn.adapter.NetCrackerRDBAdapter;
 import ec.otecel.allmsisdn.constants.MsConstants;
 import ec.otecel.allmsisdn.dto.exposition.AllMsisdnRequestDTO;
 import ec.otecel.allmsisdn.dto.exposition.AllMsisdnResponseDTO;
@@ -13,13 +13,11 @@ import ec.otecel.allmsisdn.util.BasicOperationService;
 import ec.otecel.common.model.globalintegration.header.HeaderInType;
 import ec.otecel.component.error.exception.ComponentException;
 import ec.otecel.component.logs.config.LoggerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.util.Strings;
 import ec.otecel.common.model.commontypes.ErrorCodeType;
-import ec.otecel.common.model.commontypes.LoggerAppType;
 
 @Service
 public class AllMsisdnService implements IAllMsisdnService {
@@ -46,12 +44,12 @@ public class AllMsisdnService implements IAllMsisdnService {
                 }
                 AllMsisdnResponseDTO response = netCrackerRDBAdapter.allMsisdn(headerIn, request, "2", finalStep);
                 if (response == null) {
-                    throw new ComponentException(ErrorCodeType.ERROR_INESPERADO, "No response from NetCracker", true, new String[]{}, getClass().getSimpleName());
+                    throw new ComponentException(ErrorCodeType.ERROR_INESPERADO, "Sin respuesta de NetCracker", true, new String[]{}, getClass().getSimpleName());
                 }
                 try {
                     redisAdapter.saveRedis(headerIn, new SaveRedisRequestDTO(key, allMsisdnResponseToJson(response), Integer.valueOf(request.getTimeToLive())), "3", finalStep);
                 } catch (Exception e) {
-                    loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY, UUID.randomUUID().toString(), LoggerAppType.DSI_AUDIT_BODY_ERROR_HANDLER.toString(), "Cache save failed: " + e.getMessage(), getClass().getSimpleName());
+                    loggerService.logApp(UUID.randomUUID().toString(), "Error guardando en cache: " + e.getMessage());
                 }
                 return response;
             }

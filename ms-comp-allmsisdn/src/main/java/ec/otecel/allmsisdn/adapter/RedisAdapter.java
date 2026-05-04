@@ -34,25 +34,25 @@ public class RedisAdapter {
 
     private LoggerService loggerService;
 
-    @Value("${otecel.api.redis.host:localhost}")
+    @Value("${otecel.api.redis.host:default_value}")
     private String redisHost;
 
-    @Value("${otecel.api.redis.port:8080}")
+    @Value("${otecel.api.redis.port:default_value}")
     private String redisPort;
 
-    @Value("${otecel.api.redis.path.save:/comp/redis/v2/saveRedisTimeToLive}")
+    @Value("${otecel.api.redis.path.save:default_value}")
     private String savePath;
 
-    @Value("${otecel.api.redis.path.recover:/comp/redis/v2/getDataRedis}")
+    @Value("${otecel.api.redis.path.recover:default_value}")
     private String recoverPath;
 
-    @Value("${otecel.api.redis.timeout:20000}")
+    @Value("${otecel.api.redis.timeout:default_value}")
     private Integer redisTimeOut;
 
-    @Value("${otecel.api.internal.https:false}")
+    @Value("${otecel.api.internal.https:default_value}")
     private boolean apiHttps;
 
-    @Value("${otecel.api.token:}")
+    @Value("${otecel.api.token:default_value}")
     private String basicToken;
 
     @Autowired
