@@ -1,6 +1,12 @@
 
 package ec.otecel.allmsisdn.exception;
 
+import ec.otecel.common.model.commontypes.ErrorCodeType;
+import ec.otecel.component.error.adapter.ServiceErrorAdapter;
+import ec.otecel.allmsisdn.util.ErrorMappingProperties;
+import ec.otecel.allmsisdn.util.ErrorTOpenApiProperties;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +37,21 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private final LoggerService loggerService;
+    private final ServiceErrorAdapter adapterError;
+    private final ErrorTOpenApiProperties fmwErrors;
+    private final ErrorMappingProperties mappingErrors;
     protected String uUidTransaction = null;
 
-    public GlobalExceptionHandler(LoggerService loggerService) {
+    public GlobalExceptionHandler(LoggerService loggerService,
+                                  ServiceErrorAdapter adapterError,
+                                  ErrorTOpenApiProperties fmwErrors,
+                                  ErrorMappingProperties mappingErrors) {
         this.loggerService = loggerService;
+        this.adapterError = adapterError;
+        this.fmwErrors = fmwErrors;
+        this.mappingErrors = mappingErrors;
     }
-
+    
     // --- Handlers Específicos ---
 
     @ExceptionHandler(ComponentException.class)
@@ -94,6 +109,34 @@ public class GlobalExceptionHandler {
                 MsConstants.EXCEPTION_CODE_1001, ex.getReason(), null);
     }
 
+    /**
+     * Este método maneja las excepciones HttpMessageNotReadableException que pueden
+     * ocurrir cuando hay un problema con el formato de los datos de la solicitud (JSON mal formado).
+     *
+     * @param ex La excepción HttpMessageNotReadableException que se ha lanzado.
+     * @param request La solicitud web que causó la excepción.
+     * @return ResponseEntity<MessageFaultDTO> Una respuesta HTTP con un objeto MessageFaultDTO.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<MessageFaultDTO> handleMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
+        loggerService.normalLogError("Error handleMessageNotReadable", ex);
+
+        // Crear ComponentException con el tipo de error de parámetros incorrectos
+        ComponentException er = new ComponentException(
+                ErrorCodeType.ERROR_PARAMETROS_INCORRECTOS,
+                null,
+                true, null,
+                MsConstants.SERVICE);
+
+        // Invocar Transformador Errores
+        MessageFaultDTO error = adapterError.errorHandlerRest(er, fmwErrors.getErrors(), mappingErrors.getErrors());
+        error.setExceptionDetail(null);
+        error.getAppDetail().setExceptionAppMessage(MsConstants.INVALID_PARAMETER_BODY);
+        error.getAppDetail().setExceptionAppCause(MsConstants.INVALID_PARAMETER_BODY);
+
+        return new ResponseEntity<>(error,
+                HttpStatus.valueOf(Integer.parseInt(error.getExceptionProtocol().getCode())));
+    }
 
     private ResponseEntity<MessageFaultDTO> buildResponse(Exception ex, WebRequest request, HttpStatus status, String appCode, String message, String detail) {
         String path = request.getDescription(false).replace("uri=", "");

@@ -1,26 +1,20 @@
-# ------------------------------------------------------------------------
-#
-# Imagen de microservicio - Telefonica
-# 
-# Directorio de ubicacion de todos los microservicio /opt/ms/ms-comp-allmsisdn
-#
-# docker build -f Dockerfile -t ms-comp-allmsisdn:1.0.0-qa .
-#
-# ------------------------------------------------------------------------
+FROM 10.112.230.33/telefonica/g-microservicios/base/jre-25.0.2_12:latest
 
-FROM 10.112.230.33/telefonica/g-microservicios/base/openjdk-8-runtime-java:latest
-MAINTAINER devops@telefonica.com.ec
+# Instalar libgcc para soporte de Netty QUIC (RHEL/CentOS minimal)
+RUN dnf install -y libgcc || echo 'dnf no disponible, contacte al equipo de infraestructura para incluir libgcc en la imagen base.'
 
-RUN mkdir -p /opt/ms/ms-comp-allmsisdn
+RUN mkdir -p /opt/ms/ms-comp-allmsisdn && mkdir -p /opt/log/ms-comp-allmsisdn
 
 WORKDIR /opt/ms/ms-comp-allmsisdn
 
 # --------------------------------
 # Copy scripts, packages & plugins
 # --------------------------------
-COPY target/ms-comp-allmsisdn-1.0.0.jar /opt/ms/ms-comp-allmsisdn/
+COPY --from=builder:1.0.0 /app/target/*.jar /opt/ms/ms-comp-allmsisdn/
 
-
+# Set permissions
+USER root
+RUN chown -R :1000 /opt/ms/ms-comp-allmsisdn && chmod -R g+rwx /opt/ms/ms-comp-allmsisdn
 #-----------------------
 # Expose container ports
 # ----------------------

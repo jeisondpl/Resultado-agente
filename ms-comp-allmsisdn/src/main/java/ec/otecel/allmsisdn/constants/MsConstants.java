@@ -2,14 +2,15 @@ package ec.otecel.allmsisdn.constants;
 
 public class MsConstants {
 
-    public static final String SERVICE = "ms-comp-allmsisdn";
-    public static final String METHOD_NAME_ALL_MSISDN = "allMsisdn";
-    public static final String MS_SERVICE_NETCRACKER = "netcracker-rdb";
-    public static final String MS_SERVICE_REDIS = "redis-cache";
-    public static final String METHOD_NAME_SAVE_REDIS = "saveRedis";
-    public static final String METHOD_NAME_RECOVER_REDIS = "getDataRedis";
-    public static final String RESPONSE = " - Response: ";
-    public static final String RESULT_CODE_ERROR = "Error consumiendo legado en ";
+	public static final String SERVICE = "ms-comp-allmsisdn";
+	public static final String METHOD1 = "AllMsisdn";
+	public static final String MS_SERVICE_NETCRACKER = "netcracker-rdb";
+	public static final String METHOD_NAME_ALL_MSISDN = "allMsisdn";
+	public static final String MS_SERVICE_REDIS = "redis-cache";
+	public static final String METHOD_NAME_SAVE_REDIS = "saveRedis";
+	public static final String METHOD_NAME_RECOVER_REDIS = "getDataRedis";
+
+	// Otras constantes existentes
     // === Auto-merged by refactor — preserva baseline arquetipo + run previo ===
     public static final String ADD = "addPayment";
     public static final String UNEXPECTED_ERROR_VALUES_ENTERED = "Error inesperado con los valores ingresados ";
@@ -17,6 +18,7 @@ public class MsConstants {
     public static final String RESULT_CODE_INTEGRATION_OK = "0000";
     public static final String RESULT_CODE_OK = "0";
     public static final String RESULT_MESSAGE_OK = "Success";
+    public static final String RESULT_CODE_ERROR = "1";
     public static final String RESULT_MESSAGE_NO_DATA = "No hay datos para procesar";
     public static final String RESULT_MESSAGE_ERROR = "Error";
     public static final String P_RESULT_CODE = "p_result_code";
@@ -33,7 +35,7 @@ public class MsConstants {
     public static final String OPERATION_NAME_GET_PARAMETERS_BY_GROUP = "getParametersByGroup";
     public static final String SERVICE_POSTGRESS_REPOSITORY = "DBPostgresRepository";
     public static final String OPERATION_NAME_GET_PARAMETERS = "getParameters";
-    public static final String AUTHORIZATION = "Authorization";
+    public static final String AUTHORIZATION = "AUTHORIZATION";
     public static final String HTTP_CODE_BAD_REQUEST = "400";
     public static final String INVALID_PARAMETER_BODY = "Invalid parameters";
     public static final String HTTP_CODE_INTERNAL_SERVER_ERROR = "500";
@@ -48,12 +50,12 @@ public class MsConstants {
     public static final String EXCEPTION_CODE_1001 = "SVC1001";
     public static final String CHAR_E_ERROR = "E";
     public static final String T_OPEN_API = "T-OpenAPI";
+    public static final String RESPONSE = "Response";
     public static final String ERROR_INESPERADO = "Error inesperado";
     public static final String PAYMENTEZ_CORE_DB = "ms-comp-allmsisdn";
-    public static final String METHOD1 = "AllMsisdn";
 
 
-    private MsConstants() {
-        // Se deja vacío.
-    }
+	private MsConstants() {
+		// Se deja vacío.
+	}
 }

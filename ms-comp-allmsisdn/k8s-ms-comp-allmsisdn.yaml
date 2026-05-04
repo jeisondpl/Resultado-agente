@@ -5,6 +5,8 @@ metadata:
   namespace: ms-middleware
   labels:
     event: ms-comp-allmsisdn
+  annotations:
+    path-url-project-properties: otecel/G-Microservicios/G-MSComponents/APL-MSCustomerCheckInvoice/-/tree/master/ms-comp-allmsisdn/src/main/resources
 spec:
   strategy:
     type: Recreate

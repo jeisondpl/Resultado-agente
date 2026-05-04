@@ -1,6 +1,8 @@
 
 package ec.otecel.allmsisdn.controller;
 
+import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +96,7 @@ public class AllMsisdnController{
 	public ResponseEntity allMsisdn(@RequestHeader Map<String, String> headerReq,
 			@RequestBody AllMsisdnRequestDTO request)throws ComponentException
 	{
-	
+            headerReq = lowerCaseHeaderKeys(headerReq);
 			return new BasicOperationController<AllMsisdnResponseDTO, AllMsisdnRequestDTO>(headerReq,
 					new AllMsisdnResponseDTO(), request) {
 			  @Override
@@ -107,4 +109,18 @@ public class AllMsisdnController{
 
 	}
 
+    private static Map<String, String> lowerCaseHeaderKeys(Map<String, String> headers) {
+        if (headers == null) {
+            return null;
+        }
+        Map<String, String> normalized = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String key = entry.getKey();
+            if (key == null) {
+                continue;
+            }
+            normalized.put(key.toLowerCase(Locale.ROOT), entry.getValue());
+        }
+        return normalized;
+    }
 }

@@ -1,7 +1,7 @@
 package ec.otecel.allmsisdn.service;
 
-import ec.otecel.allmsisdn.adapter.RedisAdapter;
 import ec.otecel.allmsisdn.adapter.NetCrackerRDBAdapter;
+import ec.otecel.allmsisdn.adapter.RedisAdapter;
 import ec.otecel.allmsisdn.constants.MsConstants;
 import ec.otecel.allmsisdn.dto.exposition.AllMsisdnRequestDTO;
 import ec.otecel.allmsisdn.dto.exposition.AllMsisdnResponseDTO;
