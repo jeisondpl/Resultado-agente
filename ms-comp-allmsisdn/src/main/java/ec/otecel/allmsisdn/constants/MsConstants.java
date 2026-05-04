@@ -8,12 +8,16 @@ public class MsConstants {
 	public static final String MS_SERVICE_REDIS = "redis-cache";
 	public static final String METHOD_NAME_SAVE_REDIS = "saveRedis";
 	public static final String METHOD_NAME_RECOVER_REDIS = "getDataRedis";
+
+	// Otras constantes existentes...
+
+
     // === Auto-merged by refactor — preserva baseline arquetipo + run previo ===
     public static final String ADD = "addPayment";
     public static final String UNEXPECTED_ERROR_VALUES_ENTERED = "Error inesperado con los valores ingresados ";
     public static final int RESULT_CODE_INTEGER_OK = 0;
     public static final String RESULT_CODE_INTEGRATION_OK = "0000";
-    public static final String RESULT_CODE_OK = "0";
+    public static final String RESULT_CODE_OK = "0000";
     public static final String RESULT_MESSAGE_OK = "Success";
     public static final String RESULT_CODE_ERROR = "Error consumiendo legado en ";
     public static final String RESULT_MESSAGE_NO_DATA = "No hay datos para procesar";
@@ -47,13 +51,8 @@ public class MsConstants {
     public static final String EXCEPTION_CODE_1001 = "SVC1001";
     public static final String CHAR_E_ERROR = "E";
     public static final String T_OPEN_API = "T-OpenAPI";
-    public static final String RESPONSE = "Response";
+    public static final String RESPONSE = " - Response: ";
     public static final String ERROR_INESPERADO = "Error inesperado";
     public static final String METHOD1 = "AllMsisdn";
     public static final String PAYMENTEZ_CORE_DB = "ms-comp-allmsisdn";
-
-
-	private MsConstants() {
-		// Se deja vacío.
-	}
 }
