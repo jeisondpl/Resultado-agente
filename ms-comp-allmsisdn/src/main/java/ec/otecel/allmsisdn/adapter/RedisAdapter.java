@@ -34,23 +34,23 @@ public class RedisAdapter {
 
     private LoggerService loggerService;
 
-    @Value("${otecel.api.redis.host:default_value}")
+    @Value("${otecel.api.redis.host:backendpre.movistar.com.ec}")
     private String redisHost;
 
-    @Value("${otecel.api.redis.port:default_value}")
+    @Value("${otecel.api.redis.port:32101}")
     private String redisPort;
 
-    @Value("${otecel.api.redis.path.save:default_value}")
+    @Value("${otecel.api.redis.path.save:/comp/redis/v2/saveRedisTimeToLive}")
     private String savePath;
 
-    @Value("${otecel.api.redis.path.recover:default_value}")
+    @Value("${otecel.api.redis.path.recover:/comp/redis/v2/getDataRedis}")
     private String recoverPath;
 
-    @Value("${otecel.api.redis.timeout:default_value}")
-    private Integer redisTimeOut;
+    @Value("${otecel.api.redis.timeout:20000}")
+    private String redisTimeOut;     // ✅ String — parsear con Integer.parseInt() al usar
 
-    @Value("${otecel.api.internal.https:default_value}")
-    private boolean apiHttps;
+    @Value("${otecel.api.internal.https:true}")
+    private String apiHttps;          // ✅ String — parsear con Boolean.parseBoolean() al usar
 
     @Value("${otecel.api.token:default_value}")
     private String basicToken;
@@ -75,14 +75,15 @@ public class RedisAdapter {
                         throws ComponentException {
 
                     Map<String, String> headerInMap = RestUtil.objectToMap(headerIn);
-                    if (apiHttps) {
+                    if (Boolean.parseBoolean(apiHttps)) {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
                     BaseRequester requester = new BaseRequester(redisHost, redisPort, savePath,
                             HttpMethod.POST.name(), request, headerInMap);
-                    requester.setTimeout(redisTimeOut);
-                    requester.setHttps(apiHttps);
+                    // Parsear los @Value String al tipo que espera BaseRequester (ver L-39).
+                    requester.setTimeout(Integer.parseInt(redisTimeOut));
+                    requester.setHttps(Boolean.parseBoolean(apiHttps));
 
                     RestResponse<SaveRedisResponseDTO, MessageFaultDTO> response = null;
 
@@ -153,14 +154,15 @@ public class RedisAdapter {
                         throws ComponentException {
 
                     Map<String, String> headerInMap = RestUtil.objectToMap(headerIn);
-                    if (apiHttps) {
+                    if (Boolean.parseBoolean(apiHttps)) {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
                     BaseRequester requester = new BaseRequester(redisHost, redisPort, recoverPath,
                             HttpMethod.POST.name(), request, headerInMap);
-                    requester.setTimeout(redisTimeOut);
-                    requester.setHttps(apiHttps);
+                    // Parsear los @Value String al tipo que espera BaseRequester (ver L-39).
+                    requester.setTimeout(Integer.parseInt(redisTimeOut));
+                    requester.setHttps(Boolean.parseBoolean(apiHttps));
 
                     RestResponse<RecoverRedisResponseDTO, MessageFaultDTO> response = null;
 

@@ -8,6 +8,8 @@ import lombok.ToString;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
 public class SaveRedisResponseDTO {
+    /** Código del resultado */
     private String code;
+    /** Mensaje del resultado */
     private String message;
 }

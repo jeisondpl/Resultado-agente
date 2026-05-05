@@ -16,7 +16,7 @@ public class AllMsisdnRequestDTO {
      * Obligatorio. Máx 15 caracteres. Solo letras.
      */
     @NotNull(message = "El atributo identifierType es obligatorio")
-    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo identifierType debe contener solo letras y tener longitud entre 1 y 15 caracteres")
+    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo identifierType debe contener solo letras y tener una longitud entre 1 y 15 caracteres")
     private String identifierType;
 
     /**
@@ -24,7 +24,7 @@ public class AllMsisdnRequestDTO {
      * Obligatorio. Máx 50 caracteres. Solo alfanumérico.
      */
     @NotNull(message = "El atributo identifierNumber es obligatorio")
-    @Pattern(regexp = "^[a-zA-Z0-9]{1,50}$", message = "El atributo identifierNumber debe contener solo letras y números, longitud entre 1 y 50 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9]{1,50}$", message = "El atributo identifierNumber debe contener solo letras y números y tener una longitud entre 1 y 50 caracteres")
     private String identifierNumber;
 
     /**
@@ -32,7 +32,7 @@ public class AllMsisdnRequestDTO {
      * Obligatorio. Máx 15 caracteres. Solo letras.
      */
     @NotNull(message = "El atributo level es obligatorio")
-    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo level debe contener solo letras y tener longitud entre 1 y 15 caracteres")
+    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo level debe contener solo letras y tener una longitud entre 1 y 15 caracteres")
     private String level;
 
     /**
@@ -40,14 +40,14 @@ public class AllMsisdnRequestDTO {
      * Obligatorio. Máx 50 caracteres. Solo números.
      */
     @NotNull(message = "El atributo operatorId es obligatorio")
-    @Pattern(regexp = "^[0-9]{1,50}$", message = "El atributo operatorId debe contener solo números y tener longitud entre 1 y 50 caracteres")
+    @Pattern(regexp = "^[0-9]{1,50}$", message = "El atributo operatorId debe contener solo números y tener una longitud entre 1 y 50 caracteres")
     private String operatorId;
 
     /**
      * Plan CC
      * Opcional. Máx 200 caracteres. Letras, números y comas.
      */
-    @Pattern(regexp = "^[a-zA-Z0-9,]{0,200}$", message = "El atributo listCCPlan debe contener solo letras, números y comas, longitud máxima 200 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9,]{0,200}$", message = "El atributo listCCPlan debe contener letras, números y comas, y tener una longitud máxima de 200 caracteres")
     private String listCCPlan;
 
     /**
@@ -55,7 +55,7 @@ public class AllMsisdnRequestDTO {
      * Obligatorio. Máx 10 caracteres. Solo mayúsculas.
      */
     @NotNull(message = "El atributo filterPlan es obligatorio")
-    @Pattern(regexp = "^[A-Z]{1,10}$", message = "El atributo filterPlan debe contener solo mayúsculas y tener longitud entre 1 y 10 caracteres")
+    @Pattern(regexp = "^[A-Z]{1,10}$", message = "El atributo filterPlan debe contener solo mayúsculas y tener una longitud entre 1 y 10 caracteres")
     private String filterPlan;
 
     /**
@@ -68,6 +68,6 @@ public class AllMsisdnRequestDTO {
      * Tiempo de vida
      * Opcional. Máx 5 caracteres. Solo números.
      */
-    @Pattern(regexp = "^[0-9]{0,5}$", message = "El atributo timeToLive debe contener solo números y tener longitud máxima de 5 caracteres")
+    @Pattern(regexp = "^[0-9]{0,5}$", message = "El atributo timeToLive debe contener solo números y tener una longitud máxima de 5 caracteres")
     private String timeToLive;
 }

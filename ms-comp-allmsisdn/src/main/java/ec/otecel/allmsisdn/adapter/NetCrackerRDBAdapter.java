@@ -32,20 +32,20 @@ public class NetCrackerRDBAdapter {
 
     private LoggerService loggerService;
 
-    @Value("${otecel.api.rdb.host:default_value}")
+    @Value("${otecel.api.rdb.host:backendpre.movistar.com.ec}")
     private String apiHost;
 
-    @Value("${otecel.api.rdb.port:default_value}")
+    @Value("${otecel.api.rdb.port:32101}")
     private String apiPort;
 
-    @Value("${otecel.api.rdb.path.all.msisdn:default_value}")
+    @Value("${otecel.api.rdb.path.all.msisdn:/netcrackerrdb/allMsisdn}")
     private String apiPath;
 
-    @Value("${otecel.api.rdb.timeout:default_value}")
-    private Integer apiTimeOut;
+    @Value("${otecel.api.rdb.timeout:40000}")
+    private String apiTimeOut;
 
-    @Value("${otecel.api.internal.https:default_value}")
-    private boolean apiHttps;
+    @Value("${otecel.api.internal.https:true}")
+    private String apiHttps;
 
     @Value("${otecel.api.token:default_value}")
     private String basicToken;
@@ -70,19 +70,19 @@ public class NetCrackerRDBAdapter {
                         throws ComponentException {
 
                     Map<String, String> headerInMap = RestUtil.objectToMap(headerIn);
-                    if (apiHttps) {
+                    if (Boolean.parseBoolean(apiHttps)) {
                         headerInMap.put(MsConstants.AUTHORIZATION, basicToken);
                     }
 
                     BaseRequester requester = new BaseRequester(apiHost, apiPort, apiPath,
                             HttpMethod.POST.name(), request, headerInMap);
-                    requester.setTimeout(apiTimeOut);
-                    requester.setHttps(apiHttps);
+                    requester.setTimeout(Integer.parseInt(apiTimeOut));
+                    requester.setHttps(Boolean.parseBoolean(apiHttps));
 
                     RestResponse<AllMsisdnResponseDTO, MessageFaultDTO> response = null;
 
                     try {
-                        loggerService.logApp(uUidTransaction, Strings.EMPTY, uUidTransaction,
+                        loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY, UUID.randomUUID().toString(),
                                 LoggerAppType.DSI_MCI_BODY_AUDIT_REQUEST.toString(),
                                 step + "Se inicia " + message,
                                 ErrorUtil.createErrorLocation(this.getClass().getSimpleName(),
@@ -90,7 +90,7 @@ public class NetCrackerRDBAdapter {
 
                         response = requester.run(AllMsisdnResponseDTO.class, MessageFaultDTO.class, 5000);
 
-                        loggerService.logApp(uUidTransaction, Strings.EMPTY, uUidTransaction,
+                        loggerService.logApp(UUID.randomUUID().toString(), Strings.EMPTY, UUID.randomUUID().toString(),
                                 LoggerAppType.DSI_MCI_BODY_AUDIT_REQUEST.toString(),
                                 step + "Se realiza " + message + ", de manera correcta",
                                 ErrorUtil.createErrorLocation(this.getClass().getSimpleName(),
@@ -112,8 +112,7 @@ public class NetCrackerRDBAdapter {
 
                     } catch (JsonProcessingException e) {
                         throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL, true,
-                                new String[]{MsConstants.RESULT_CODE_ERROR
-                                        + apiHost + ":" + apiPort + "/" + apiPath},
+                                new String[]{MsConstants.RESULT_CODE_ERROR + apiHost + ":" + apiPort + "/" + apiPath},
                                 this.getClass().getSimpleName());
                     }
 
