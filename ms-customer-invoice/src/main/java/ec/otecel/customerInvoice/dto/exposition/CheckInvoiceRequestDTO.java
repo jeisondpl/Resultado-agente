@@ -24,7 +24,7 @@ public class CheckInvoiceRequestDTO {
      * Validación: solo letras y números, longitud 4-27
      */
     @NotNull(message = "El atributo sourceSystem es obligatorio")
-    @Pattern(regexp = "^[a-zA-Z0-9]{4,27}$", message = "El atributo sourceSystem debe contener solo letras y números y tener una longitud entre 4 y 27 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9]{4,27}$", message = "El atributo sourceSystem debe contener solo letras y números, longitud entre 4 y 27 caracteres")
     private String sourceSystem;
 
     /**

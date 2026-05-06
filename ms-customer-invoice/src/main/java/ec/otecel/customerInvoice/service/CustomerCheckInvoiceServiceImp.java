@@ -11,16 +11,11 @@ import ec.otecel.component.error.exception.ComponentException;
 import ec.otecel.component.logs.config.LoggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ec.otecel.customerInvoice.dto.exposition.GetAccountNumberRequestDTO;
 import ec.otecel.customerInvoice.dto.exposition.GetAccountNumberResponseDTO;
-import ec.otecel.customerInvoice.dto.exposition.GetInvoiceRequestDTO;
-import ec.otecel.customerInvoice.dto.exposition.GetInvoiceResponseDTO;
+import ec.otecel.common.model.commontypes.ErrorCodeType;
 
 @Service
 public class CustomerCheckInvoiceServiceImp implements ICustomerCheckInvoiceService {
-
-    @Autowired
-    private LoggerService loggerService;
 
     @Autowired
     private NetcrackerRDBAdapter netcrackerRDBAdapter;
@@ -28,26 +23,31 @@ public class CustomerCheckInvoiceServiceImp implements ICustomerCheckInvoiceServ
     @Autowired
     private NetcrackerRBMAdapter netcrackerRBMAdapter;
 
+    @Autowired
+    private LoggerService loggerService;
+
     @Override
-    public CheckInvoiceResponseDTO checkInvoice(HeaderInType headers, CheckInvoiceRequestDTO request) throws ComponentException {
-        return new BasicOperationService<CheckInvoiceResponseDTO, CheckInvoiceRequestDTO>(headers, new CheckInvoiceResponseDTO(), request) {
+    public CheckInvoiceResponseDTO checkInvoice(HeaderInType h, CheckInvoiceRequestDTO req) throws ComponentException {
+        return new BasicOperationService<CheckInvoiceResponseDTO, CheckInvoiceRequestDTO>(h, new CheckInvoiceResponseDTO(), req) {
             @Override
             public CheckInvoiceResponseDTO process(HeaderInType headerIn, CheckInvoiceRequestDTO request) throws ComponentException {
                 // Paso 1: Obtener el número de cuenta
-                GetAccountNumberResponseDTO accountResponse = netcrackerRDBAdapter.getAccountNumberByMsisdn(headerIn, new GetAccountNumberRequestDTO(request.getPhoneNumber(), convertDate(request.getTransactionDate()), Integer.valueOf(request.getDelta())));
+                GetAccountNumberResponseDTO accountResponse = netcrackerRDBAdapter.getAccountNumberByMsisdn(headerIn, new GetAccoutNumberRequestDTO(request.getPhoneNumber(), request.getTransactionDate(), Integer.valueOf(request.getDelta())));
+                if (accountResponse == null) {
+                    throw new ComponentException(ErrorCodeType.SYS_ERROR, "Sin respuesta de Netcracker", true, new String[]{}, getClass().getSimpleName());
+                }
+
                 // Paso 2: Obtener la factura por número de cuenta
                 GetInvoiceResponseDTO invoiceResponse = netcrackerRBMAdapter.getInvoiceByAccountNumber(headerIn, new GetInvoiceRequestDTO(accountResponse.getData().getBan()));
+                if (invoiceResponse == null) {
+                    throw new ComponentException(ErrorCodeType.SYS_ERROR, "Sin respuesta de Netcracker RBM", true, new String[]{}, getClass().getSimpleName());
+                }
+
                 // Paso 3: Retornar la respuesta
                 return new CheckInvoiceResponseDTO(accountResponse.getData().getBan(), invoiceResponse.getData().getBills(), invoiceResponse.getData().getRetry());
             }
         }.initializer(loggerService)
          .setCommonInfo(MsConstants.SERVICE, MsConstants.METHOD_NAME_CHECK_INVOICE, getClass().getSimpleName())
          .run();
-    }
-
-    private String convertDate(String date) {
-        // Lógica de conversión de formatos de fechas
-        // Implementar según la lógica requerida
-        return date;
     }
 }

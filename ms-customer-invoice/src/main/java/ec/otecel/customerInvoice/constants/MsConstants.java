@@ -8,10 +8,6 @@ public class MsConstants {
 	
 	public static final String SERVICE = "ms-customer-invoice";
 	public static final String METHOD1 = "CustomerInvoice";
-	public static final String METHOD_NAME_CHECK_INVOICE = "checkInvoice";
-	public static final String METHOD_NAME_GET_INVOICE = "getInvoiceByAccountNumber";
-	public static final String METHOD_NAME_ALL_MSISDN = "getAccountNumberByMsisdn";
-	public static final String MS_SERVICE_NETCRACKER = "Netcracker";
 	
 	public static final String ADD = "addPayment";
 	

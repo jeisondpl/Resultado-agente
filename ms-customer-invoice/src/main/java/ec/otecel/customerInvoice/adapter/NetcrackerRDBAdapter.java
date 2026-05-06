@@ -39,35 +39,35 @@ public class NetcrackerRDBAdapter {
     private String apiPort;
 
     @Value("${otecel.api.rdb.path.getAccountNumber:default_value}")
-    private String path;
+    private String pathGetAccountNumber;
 
     @Value("${otecel.api.rdb.timeout:default_value}")
     private String timeout;
 
-    @Value("${otecel.api.token:default_value}")
-    private String token;
+    @Value("${otecel.api.rdb.https:default_value}")
+    private String https;
 
     @Autowired
     public NetcrackerRDBAdapter(LoggerService loggerService) {
         this.loggerService = loggerService;
     }
 
-    public GetAccountNumberResponseDTO getAccountNumberByMsisdn(HeaderInType headerIn, GetAccountNumberRequestDTO req) throws ComponentException {
+    public GetAccountNumberResponseDTO getAccountNumberByMsisdn(HeaderInType h, GetAccountNumberRequestDTO req) throws ComponentException {
         String message = "consumo del legado Netcracker RDB getAccountNumberByMsisdn";
         String step = "PASO 1 - 1 LEGADO: ";
         String stepError = "PASO 1 - 1 LEGADO_ERROR: ";
 
         try {
-            return new BasicOperationAdapter<GetAccountNumberResponseDTO, GetAccountNumberRequestDTO>(headerIn, new GetAccountNumberResponseDTO(), req) {
+            return new BasicOperationAdapter<GetAccountNumberResponseDTO, GetAccountNumberRequestDTO>(h, new GetAccountNumberResponseDTO(), req) {
                 public GetAccountNumberResponseDTO process(HeaderInType headerIn, GetAccountNumberRequestDTO request) throws ComponentException {
                     Map<String, String> headerInMap = RestUtil.objectToMap(headerIn);
-                    if (Boolean.parseBoolean("true")) {
-                        headerInMap.put(MsConstants.AUTHORIZATION, token);
+                    if (Boolean.parseBoolean(https)) {
+                        headerInMap.put(MsConstants.AUTHORIZATION, "Basic YWRtaW46c1kzNU1Yei56dVg=");
                     }
 
-                    BaseRequester requester = new BaseRequester(apiHost, apiPort, path, HttpMethod.POST.name(), request, headerInMap);
+                    BaseRequester requester = new BaseRequester(apiHost, apiPort, pathGetAccountNumber, HttpMethod.POST.name(), request, headerInMap);
                     requester.setTimeout(Integer.parseInt(timeout));
-                    requester.setHttps(Boolean.parseBoolean("true"));
+                    requester.setHttps(Boolean.parseBoolean(https));
 
                     RestResponse<GetAccountNumberResponseDTO, MessageFaultDTO> response = null;
 
@@ -84,13 +84,13 @@ public class NetcrackerRDBAdapter {
                             throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL, response.getErrorResponse().getExceptionMessage(), true, new String[]{request.toString()}, ErrorUtil.createErrorLocation(NetcrackerRDBAdapter.class.getSimpleName(), LayerType.INTEGRATION));
                         }
                     } catch (JsonProcessingException e) {
-                        throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL, true, new String[]{MsConstants.RESULT_CODE_ERROR + apiHost + ":" + apiPort + "/" + path}, this.getClass().getSimpleName());
+                        throw new ComponentException(ErrorCodeType.ERROR_INTERNO_SL, true, new String[]{MsConstants.RESULT_CODE_ERROR + apiHost + ":" + apiPort + "/" + pathGetAccountNumber}, this.getClass().getSimpleName());
                     }
 
                     return response.getBodyResponse();
                 }
             }.initializer(loggerService)
-             .setCommonInfo(MsConstants.MS_SERVICE_NETCRACKER, MsConstants.METHOD_NAME_ALL_MSISDN, NetcrackerRDBAdapter.class.getSimpleName())
+             .setCommonInfo(MsConstants.MS_SERVICE_NETCRACKER, MsConstants.METHOD_NAME_GET_ACCOUNT_NUMBER, NetcrackerRDBAdapter.class.getSimpleName())
              .run();
 
         } catch (Exception e) {
