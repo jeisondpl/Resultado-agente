@@ -1,0 +1,73 @@
+package ec.otecel.allmsisdn.dto.exposition;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import java.util.List;
+
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
+public class AllMsisdnRequestDTO {
+    /**
+     * Tipo de identificador
+     * Validación: solo letras, 1-15 caracteres
+     */
+    @NotNull(message = "El atributo identifierType es obligatorio")
+    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo identifierType debe contener solo letras y tener una longitud entre 1 y 15 caracteres")
+    private String identifierType;
+
+    /**
+     * Número identificador
+     * Validación: solo alfanumérico, 1-50 caracteres
+     */
+    @NotNull(message = "El atributo identifierNumber es obligatorio")
+    @Pattern(regexp = "^[a-zA-Z0-9]{1,50}$", message = "El atributo identifierNumber debe contener solo letras y números, longitud entre 1 y 50 caracteres")
+    private String identifierNumber;
+
+    /**
+     * Nivel
+     * Validación: solo letras, 1-15 caracteres
+     */
+    @NotNull(message = "El atributo level es obligatorio")
+    @Pattern(regexp = "^[a-zA-Z]{1,15}$", message = "El atributo level debe contener solo letras y tener una longitud entre 1 y 15 caracteres")
+    private String level;
+
+    /**
+     * ID del operador
+     * Validación: solo números, 1-50 caracteres
+     */
+    @NotNull(message = "El atributo operatorId es obligatorio")
+    @Pattern(regexp = "^[0-9]{1,50}$", message = "El atributo operatorId debe contener solo números y tener una longitud entre 1 y 50 caracteres")
+    private String operatorId;
+
+    /**
+     * Plan CC
+     * Validación: opcional, máximo 200 caracteres
+     */
+    @Pattern(regexp = "^[a-zA-Z0-9,]{0,200}$", message = "El atributo listCCPlan debe contener letras, números y comas, longitud máxima 200 caracteres")
+    private String listCCPlan;
+
+    /**
+     * Filtro de plan
+     * Validación: solo mayúsculas, 1-10 caracteres
+     */
+    @NotNull(message = "El atributo filterPlan es obligatorio")
+    @Pattern(regexp = "^[A-Z]{1,10}$", message = "El atributo filterPlan debe contener solo mayúsculas y tener una longitud entre 1 y 10 caracteres")
+    private String filterPlan;
+
+    /**
+     * Tipo de suscripción
+     * Validación: opcional, lista de textos
+     */
+    private List<String> subscriptionType;
+
+    /**
+     * Tiempo de vida
+     * Validación: opcional, solo números, máximo 5 caracteres
+     */
+    @Pattern(regexp = "^[0-9]{0,5}$", message = "El atributo timeToLive debe contener solo números y tener una longitud máxima de 5 caracteres")
+    private Integer timeToLive;
+}
