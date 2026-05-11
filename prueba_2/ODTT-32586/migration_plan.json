@@ -1,0 +1,1155 @@
+{
+  "schema_version": "1.0",
+  "mau_ref": {
+    "mau_type": "ODTT",
+    "mau_id": "32586",
+    "document_filename": "MAU_ESTIMACION_ODTT-32586.docx",
+    "document_sha256": "9cc1dda785b280a2c5e102bae9369209aa532c9636869930882fdd8a95e581ae",
+    "title": null,
+    "detected_sections": [
+      "unknown"
+    ],
+    "total_diagrams": 11,
+    "diagrams_interpreted": 3
+  },
+  "problem_statement": "El objetivo principal de la migración es actualizar los microservicios existentes que operan en un bus G-MSOSB a un entorno más moderno y eficiente utilizando Java OPENJDK 25 LTS, Spring Boot 4 y Redis 8. Esta actualización busca mejorar la eficiencia, modularidad y escalabilidad del sistema, permitiendo una mejor integración con servicios REST y optimizando el flujo de datos. El alcance de la migración incluye la actualización de microservicios y librerías comunes al nuevo estándar, asegurando que funcionen correctamente en escenarios reales. Se utilizarán arquetipos corporativos específicos para la creación de microservicios, como el arquetipoMicroservicios para servicios REST, arquetipoMicroservicios-soap-global para servicios SOAP, y arquetipoMicroservcios-soap-fullstack-micro para servicios híbridos que combinan SOAP y REST. Las restricciones incluyen la disponibilidad de los ambientes de desarrollo y pruebas, así como el acceso a bases de datos Oracle RDB y CBM. Además, se requiere que los microservicios migren sus configuraciones y dependencias para alinearse con las nuevas versiones de software y librerías, asegurando la compatibilidad y el correcto funcionamiento en el nuevo entorno.",
+  "target_stack": {
+    "java": "25",
+    "spring_boot": "4.x",
+    "jakarta": true,
+    "redis": "8",
+    "oracle": "RDB"
+  },
+  "target_architecture_summary": "Arquitectura objetivo: 10 microservicio(s) (SOAP=2, REST=4) sobre Spring Boot 4 + Java 25 + Jakarta EE 10. 6 librería(s) compartidas migradas a jakarta.*. Persistencia Oracle RDB y caché Redis 8 con clientes actualizados.",
+  "global_constraints": [
+    "No inventar dependencias ni endpoints fuera del MAU",
+    "Mantener compatibilidad SOAP backward (contratos WSDL/XSD)",
+    "Migrar javax.* → jakarta.* en todos los módulos",
+    "Conservar comportamiento funcional 1:1 con la versión actual",
+    "Usar los arquetipos corporativos `ec.otecel:arquetipoMicroservicios[(-soap-global)|(-soap-fullstack)] 2.0.0` como base; no reescribir scaffolding propio.",
+    "Componentes `lib-header-validation` / `ms-header-validation` son PROVISTOS por el arquetipo: NO crear, NO migrar.",
+    "Componentes provistos por el arquetipo (descartados de tasks): lib-header-validate, lib-header-validation"
+  ],
+  "execution_order": [
+    "T-001",
+    "T-002",
+    "T-003",
+    "T-004",
+    "T-005",
+    "T-006",
+    "T-007",
+    "T-008",
+    "T-009",
+    "T-010",
+    "T-011",
+    "T-012",
+    "T-013",
+    "T-014"
+  ],
+  "tasks": [
+    {
+      "task_id": "T-001",
+      "title": "Migrar librería lib-comp-sdp-balancequery-adapt a Jakarta + Spring Boot 4",
+      "component": "lib-comp-sdp-balancequery-adapt",
+      "component_kind": "library",
+      "objective": "Actualizar lib-comp-sdp-balancequery-adapt para usar jakarta.* y compilar bajo Java 25.",
+      "scope_summary": "Reemplazo javax.* → jakarta.*, bump de Spring Boot a 4.x, actualizar pom.xml y verificar compatibilidad backward.",
+      "inputs": {
+        "current_version": null,
+        "classification": "adapter"
+      },
+      "contracts": [],
+      "dependencies_to_add": [],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        },
+        {
+          "from": "javax.xml.bind.*",
+          "to": "jakarta.xml.bind.*"
+        },
+        {
+          "from": "javax.validation.*",
+          "to": "jakarta.validation.*"
+        },
+        {
+          "from": "javax.persistence.*",
+          "to": "jakarta.persistence.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "0 imports javax.* en src/main",
+        "Tests existentes en verde"
+      ],
+      "test_requirements": [
+        "unit",
+        "contract"
+      ],
+      "depends_on": [],
+      "estimated_effort_h": 6.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "libraries",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-002",
+      "title": "Migrar librería lib-comp-redis-adapt a Jakarta + Spring Boot 4",
+      "component": "lib-comp-redis-adapt",
+      "component_kind": "library",
+      "objective": "Actualizar lib-comp-redis-adapt para usar jakarta.* y compilar bajo Java 25.",
+      "scope_summary": "Reemplazo javax.* → jakarta.*, bump de Spring Boot a 4.x, actualizar pom.xml y verificar compatibilidad backward.",
+      "inputs": {
+        "current_version": null,
+        "classification": "adapter"
+      },
+      "contracts": [],
+      "dependencies_to_add": [],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        },
+        {
+          "from": "javax.xml.bind.*",
+          "to": "jakarta.xml.bind.*"
+        },
+        {
+          "from": "javax.validation.*",
+          "to": "jakarta.validation.*"
+        },
+        {
+          "from": "javax.persistence.*",
+          "to": "jakarta.persistence.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "0 imports javax.* en src/main",
+        "Tests existentes en verde"
+      ],
+      "test_requirements": [
+        "unit",
+        "contract"
+      ],
+      "depends_on": [],
+      "estimated_effort_h": 6.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "libraries",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-003",
+      "title": "Migrar librería lib-comp-netcracker-rdb a Jakarta + Spring Boot 4",
+      "component": "lib-comp-netcracker-rdb",
+      "component_kind": "library",
+      "objective": "Actualizar lib-comp-netcracker-rdb para usar jakarta.* y compilar bajo Java 25.",
+      "scope_summary": "Reemplazo javax.* → jakarta.*, bump de Spring Boot a 4.x, actualizar pom.xml y verificar compatibilidad backward.",
+      "inputs": {
+        "current_version": null,
+        "classification": "adapter"
+      },
+      "contracts": [],
+      "dependencies_to_add": [],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        },
+        {
+          "from": "javax.xml.bind.*",
+          "to": "jakarta.xml.bind.*"
+        },
+        {
+          "from": "javax.validation.*",
+          "to": "jakarta.validation.*"
+        },
+        {
+          "from": "javax.persistence.*",
+          "to": "jakarta.persistence.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "0 imports javax.* en src/main",
+        "Tests existentes en verde"
+      ],
+      "test_requirements": [
+        "unit",
+        "contract"
+      ],
+      "depends_on": [],
+      "estimated_effort_h": 6.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "libraries",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-004",
+      "title": "Migrar librería APL-MSLibNetcrackerCbm a Jakarta + Spring Boot 4",
+      "component": "APL-MSLibNetcrackerCbm",
+      "component_kind": "library",
+      "objective": "Actualizar APL-MSLibNetcrackerCbm para usar jakarta.* y compilar bajo Java 25.",
+      "scope_summary": "Reemplazo javax.* → jakarta.*, bump de Spring Boot a 4.x, actualizar pom.xml y verificar compatibilidad backward.",
+      "inputs": {
+        "current_version": null,
+        "classification": "other"
+      },
+      "contracts": [],
+      "dependencies_to_add": [],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        },
+        {
+          "from": "javax.xml.bind.*",
+          "to": "jakarta.xml.bind.*"
+        },
+        {
+          "from": "javax.validation.*",
+          "to": "jakarta.validation.*"
+        },
+        {
+          "from": "javax.persistence.*",
+          "to": "jakarta.persistence.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "0 imports javax.* en src/main",
+        "Tests existentes en verde"
+      ],
+      "test_requirements": [
+        "unit",
+        "contract"
+      ],
+      "depends_on": [],
+      "estimated_effort_h": 6.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "libraries",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-005",
+      "title": "Migrar microservicio APL-MSCompSdpBalancequeryRest (REST)",
+      "component": "APL-MSCompSdpBalancequeryRest",
+      "component_kind": "microservice",
+      "objective": "Modernizar APL-MSCompSdpBalancequeryRest a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "REST",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-006",
+      "title": "Migrar microservicio APL-MSHeaderValidationRest (REST)",
+      "component": "APL-MSHeaderValidationRest",
+      "component_kind": "microservice",
+      "objective": "Modernizar APL-MSHeaderValidationRest a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "REST",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-007",
+      "title": "Migrar microservicio APL-MSCompNetcrackerRDB (UNKNOWN)",
+      "component": "APL-MSCompNetcrackerRDB",
+      "component_kind": "microservice",
+      "objective": "Modernizar APL-MSCompNetcrackerRDB a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "UNKNOWN",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-008",
+      "title": "Migrar microservicio APL-MSCustomerRetrievebalancebuckets-OSB (UNKNOWN)",
+      "component": "APL-MSCustomerRetrievebalancebuckets-OSB",
+      "component_kind": "microservice",
+      "objective": "Modernizar APL-MSCustomerRetrievebalancebuckets-OSB a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "UNKNOWN",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-009",
+      "title": "Migrar microservicio APL-MSUserCustomerTypeQuery-Soap (SOAP)",
+      "component": "APL-MSUserCustomerTypeQuery-Soap",
+      "component_kind": "microservice",
+      "objective": "Modernizar APL-MSUserCustomerTypeQuery-Soap a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "SOAP",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "high",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-010",
+      "title": "Migrar microservicio APL-MSUserCustomerTypeQuery-Rest (REST)",
+      "component": "APL-MSUserCustomerTypeQuery-Rest",
+      "component_kind": "microservice",
+      "objective": "Modernizar APL-MSUserCustomerTypeQuery-Rest a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "REST",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-011",
+      "title": "Migrar microservicio APL-MSCompRedisRest (REST)",
+      "component": "APL-MSCompRedisRest",
+      "component_kind": "microservice",
+      "objective": "Modernizar APL-MSCompRedisRest a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "REST",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-012",
+      "title": "Migrar microservicio ms-customer-retrievebalancebuckets (HYBRID)",
+      "component": "ms-customer-retrievebalancebuckets",
+      "component_kind": "microservice",
+      "objective": "Modernizar ms-customer-retrievebalancebuckets a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "HYBRID",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-013",
+      "title": "Migrar microservicio ms-customer-retrieveaccountbalanceinfo (HYBRID)",
+      "component": "ms-customer-retrieveaccountbalanceinfo",
+      "component_kind": "microservice",
+      "objective": "Modernizar ms-customer-retrieveaccountbalanceinfo a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "HYBRID",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "medium",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    },
+    {
+      "task_id": "T-014",
+      "title": "Migrar microservicio ms-user-customertypequery-soap (SOAP)",
+      "component": "ms-user-customertypequery-soap",
+      "component_kind": "microservice",
+      "objective": "Modernizar ms-user-customertypequery-soap a Spring Boot 4 + Jakarta + Java 25.",
+      "scope_summary": "Actualizar pom.xml, application.yml, config SOAP/REST, reemplazar javax.* → jakarta.*, validar contratos.",
+      "inputs": {
+        "type": "SOAP",
+        "purpose": null
+      },
+      "contracts": [],
+      "dependencies_to_add": [
+        {
+          "group_id": null,
+          "artifact_id": "spring-boot-starter",
+          "current_version": null,
+          "target_version": "4.0.0",
+          "classification": "other",
+          "evidence": []
+        }
+      ],
+      "dependencies_to_remove": [],
+      "imports_to_replace": [
+        {
+          "from": "javax.servlet.*",
+          "to": "jakarta.servlet.*"
+        },
+        {
+          "from": "javax.xml.ws.*",
+          "to": "jakarta.xml.ws.*"
+        }
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "pom.xml",
+        "src/main/resources/application.yml",
+        "src/main/java/**/*.java"
+      ],
+      "files_to_delete": [],
+      "acceptance_criteria": [
+        "mvn clean verify exit 0",
+        "Endpoints SOAP/REST responden con contrato sin cambios",
+        "Healthcheck Kubernetes verde",
+        "Sonar Quality Gate Passed"
+      ],
+      "test_requirements": [
+        "unit",
+        "integration",
+        "contract",
+        "performance"
+      ],
+      "depends_on": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004"
+      ],
+      "estimated_effort_h": 12.0,
+      "risk_level": "high",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "microservices",
+          "page": null
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "id": "R-001",
+      "category": "técnico",
+      "severity": "high",
+      "title": "Compatibilidad SOAP tras Spring Boot 4 + Jakarta",
+      "description": "2 microservicio(s) SOAP requieren reemplazo javax.* → jakarta.* sin romper contratos WSDL.",
+      "evidence": [
+        "APL-MSUserCustomerTypeQuery-Soap",
+        "ms-user-customertypequery-soap"
+      ]
+    },
+    {
+      "id": "R-004",
+      "category": "dependencias",
+      "severity": "medium",
+      "title": "Orden topológico de librerías",
+      "description": "4 librería(s); deben migrarse libs base antes que consumidores.",
+      "evidence": [
+        "lib-comp-sdp-balancequery-adapt",
+        "lib-comp-redis-adapt",
+        "lib-comp-netcracker-rdb",
+        "APL-MSLibNetcrackerCbm"
+      ]
+    },
+    {
+      "id": "R-005",
+      "category": "transversal",
+      "severity": "high",
+      "title": "javax → jakarta package rename",
+      "description": "Reemplazo de imports javax.* → jakarta.* en Servlet, JAX-WS, JAXB, validation, persistence.",
+      "evidence": [
+        "Spring Boot 4 enforce Jakarta EE 10+"
+      ]
+    }
+  ],
+  "rollback_plan": {
+    "strategy": "Incremental con feature flags + blue/green por microservicio",
+    "checkpoint_per_phase": true,
+    "rollback_window_h": 24
+  },
+  "quality_gates": [
+    {
+      "id": "QG-1",
+      "name": "Build",
+      "criteria": "mvn clean verify exit 0"
+    },
+    {
+      "id": "QG-2",
+      "name": "Sonar",
+      "criteria": "Quality Gate Passed"
+    },
+    {
+      "id": "QG-3",
+      "name": "Coverage",
+      "criteria": ">= 80% líneas"
+    },
+    {
+      "id": "QG-4",
+      "name": "Contract tests",
+      "criteria": "100% verde sobre WSDL/XSD"
+    },
+    {
+      "id": "QG-5",
+      "name": "Imports",
+      "criteria": "0 imports javax.* en build final"
+    }
+  ],
+  "deliverables_index": [
+    {
+      "id": "01-documento-ejecutivo",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\01-documento-ejecutivo.md"
+    },
+    {
+      "id": "02-documento-tecnico-detallado",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\02-documento-tecnico-detallado.md"
+    },
+    {
+      "id": "03-arquitectura-objetivo",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\03-arquitectura-objetivo.md"
+    },
+    {
+      "id": "04-roadmap",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\04-roadmap.md"
+    },
+    {
+      "id": "05-backlog-tecnico",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\05-backlog-tecnico.md"
+    },
+    {
+      "id": "06-matriz-riesgos",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\06-matriz-riesgos.md"
+    },
+    {
+      "id": "07-matriz-dependencias",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\07-matriz-dependencias.md"
+    },
+    {
+      "id": "08-checklist-migracion",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\08-checklist-migracion.md"
+    },
+    {
+      "id": "09-checklist-despliegue",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\09-checklist-despliegue.md"
+    },
+    {
+      "id": "10-checklist-validacion",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\10-checklist-validacion.md"
+    },
+    {
+      "id": "11-estrategia-rollback",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\11-estrategia-rollback.md"
+    },
+    {
+      "id": "12-plan-pruebas",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\12-plan-pruebas.md"
+    },
+    {
+      "id": "13-estimacion-tecnica",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\13-estimacion-tecnica.md"
+    },
+    {
+      "id": "14-estimacion-por-componente",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\14-estimacion-por-componente.md"
+    },
+    {
+      "id": "15-priorizacion-tecnica",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\15-priorizacion-tecnica.md"
+    },
+    {
+      "id": "16-quick-wins",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\16-quick-wins.md"
+    },
+    {
+      "id": "17-riesgos-criticos",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\17-riesgos-criticos.md"
+    },
+    {
+      "id": "18-recomendaciones-arquitectonicas",
+      "path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\18-recomendaciones-arquitectonicas.md"
+    }
+  ],
+  "review_summary": "Plan generado a partir de 11 diagrama(s) (3 interpretado/s) y 10 microservicio(s) detectado(s). Riesgos identificados: 3. Pendiente: validación humana sobre arquitectura objetivo.",
+  "developer_handoff": {
+    "status": "NOT_IMPLEMENTED",
+    "handoff_contract_version": "draft-0.1",
+    "notes": "El agente desarrollador no existe todavía. Cuando se implemente, consumirá MigrationPlan.tasks en MigrationPlan.execution_order."
+  }
+}
