@@ -1,0 +1,364 @@
+{
+  "metadata": {
+    "mau_type": "ODTT",
+    "mau_id": "32586",
+    "document_filename": "MAU_ESTIMACION_ODTT-32586.docx",
+    "document_sha256": "9cc1dda785b280a2c5e102bae9369209aa532c9636869930882fdd8a95e581ae",
+    "title": null,
+    "detected_sections": [
+      "unknown"
+    ],
+    "total_diagrams": 11,
+    "diagrams_interpreted": 3
+  },
+  "diagrams": [
+    {
+      "diagram_id": "img-000",
+      "image_path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\diagrams\\img-000.png",
+      "image_sha256": "8b1602d44a10a2c35e5bfabb0f2ebb51f5bc5c7e0d8137afc07b6442d295e913",
+      "page": null,
+      "near_section": null,
+      "detected_kind": "other",
+      "description": "No se puede analizar un diagrama útil a partir de la imagen proporcionada, ya que no contiene información estructurada o relevante para la arquitectura de software.",
+      "extracted_entities": [],
+      "extracted_relations": [],
+      "confidence": 0.2,
+      "reasoning": "La imagen no presenta un diagrama que contenga elementos arquitectónicos, de flujo o de relación, lo que impide un análisis significativo."
+    },
+    {
+      "diagram_id": "img-003",
+      "image_path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\diagrams\\img-003.png",
+      "image_sha256": "5a98bccf6f9890315f2fa174ebc2bda94730fac1d3d8569c1e57a4e3d3c3f782",
+      "page": null,
+      "near_section": null,
+      "detected_kind": "other",
+      "description": "El diagrama proporcionado no contiene información estructurada o relacional que se pueda analizar en el contexto de arquitectura de software. En su lugar, presenta logotipos de marcas, lo que no permite extraer entidades o relaciones significativas para un análisis técnico. Por lo tanto, se clasifica como un diagrama no útil para este propósito.",
+      "extracted_entities": [],
+      "extracted_relations": [],
+      "confidence": 0.2,
+      "reasoning": "La imagen consiste únicamente en logotipos de marcas, sin elementos que representen arquitectura, flujo de datos o relaciones entre componentes."
+    },
+    {
+      "diagram_id": "img-007",
+      "image_path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\diagrams\\img-007.png",
+      "image_sha256": "b3bca95a76e49ad1a5f8563a59403a7d237c9be3ac1392e74fe20f5e1252136e",
+      "page": null,
+      "near_section": null,
+      "detected_kind": "flow",
+      "description": "El diagrama presenta una comparación entre la arquitectura actual y la propuesta para el servicio de consulta de balances. En la parte actual, se observa un flujo que incluye el servicio 'ms-customer-retrievebalancebuckets' que interactúa con un sistema de base de datos (RDB_OSB) y realiza llamadas a funciones específicas para obtener datos móviles. En la propuesta, se introduce un nuevo enfoque que incluye validaciones de encabezado y un servicio REST mejorado, además de la integración con componentes adicionales como 'lib-comp-sdp-balancequery' y 'lib-comp-redis-adapt'. Esta evolución sugiere un enfoque más modular y eficiente para la gestión de consultas de balance, optimizando la interacción entre los servicios y la base de datos.",
+      "extracted_entities": [
+        "ms-customer-retrievebalancebuckets",
+        "OTC_K_GET_DATA_MOBILE_LINE",
+        "OTC_P_G_DATA_FROM_MOBILE",
+        "RDB_OSB",
+        "ms-comp-sdp-balancequery-rest",
+        "ms-comp-redis-rest",
+        "lib-header-validation",
+        "lib-comp-sdp-balancequery",
+        "lib-comp-redis-adapt",
+        "ms-comp-netcrackerdb"
+      ],
+      "extracted_relations": [
+        {
+          "from": "ms-customer-retrievebalancebuckets",
+          "to": "RDB_OSB",
+          "label": "interactúa con"
+        },
+        {
+          "from": "OTC_K_GET_DATA_MOBILE_LINE",
+          "to": "ms-customer-retrievebalancebuckets",
+          "label": "llama a"
+        },
+        {
+          "from": "ms-comp-sdp-balancequery-rest",
+          "to": "lib-comp-sdp-balancequery",
+          "label": "utiliza"
+        },
+        {
+          "from": "lib-comp-redis-adapt",
+          "to": "ms-comp-redis-rest",
+          "label": "conecta con"
+        }
+      ],
+      "confidence": 0.85,
+      "reasoning": "El diagrama muestra claramente un flujo de datos y servicios, lo que indica que se trata de un diagrama de flujo. Se identifican entidades y relaciones que describen cómo interactúan los diferentes componentes en la arquitectura propuesta."
+    },
+    {
+      "diagram_id": "img-008",
+      "image_path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\diagrams\\img-008.png",
+      "image_sha256": "e81502046c4961316726bd7ccef531da6e50cf47a215a226aeee857b92eca8bc",
+      "page": null,
+      "near_section": null,
+      "detected_kind": "component",
+      "description": "El diagrama presenta una comparación entre la arquitectura actual y la propuesta para el servicio de consulta de saldo de cuentas. En la arquitectura actual, se observa un flujo de datos desde el servicio 'ms-customer-retrieveaccountbalanceinfo' hacia la base de datos 'RDB_OSB', utilizando dos operaciones: 'OTC_K_CUSTOM_INFORMATION' y 'OTC_P_QUERY_CUSTOMER'. En la propuesta, se introduce una nueva capa de validación de encabezados y se diversifican las exposiciones a SOAP y REST. Además, se incluye un nuevo servicio 'lib-comp-netcracker-cbm' que se conecta al servicio 'ms-comp-netcracker-cbm-rest', mejorando la modularidad y la flexibilidad del sistema.",
+      "extracted_entities": [
+        "APL-MSCustomerRetrieveaccountbalanceinfo-OSB",
+        "ms-customer-retrieveaccountbalanceinfo",
+        "OTC_K_CUSTOMER_INFORMATION",
+        "OTC_P_QUERY_CUSTOMER",
+        "RDB_OSB",
+        "api/cbm/bam/accounts/{id}",
+        "ms-comp-netcracker-cbm-rest",
+        "lib-header-validation-rest",
+        "lib-comp-netcracker-cbm"
+      ],
+      "extracted_relations": [
+        {
+          "from": "ms-customer-retrieveaccountbalanceinfo",
+          "to": "RDB_OSB",
+          "label": "consulta"
+        },
+        {
+          "from": "ms-customer-retrieveaccountbalanceinfo",
+          "to": "api/cbm/bam/accounts/{id}",
+          "label": "llamada"
+        },
+        {
+          "from": "lib-header-validation-rest",
+          "to": "ms-header-validation-rest",
+          "label": "validación"
+        },
+        {
+          "from": "lib-comp-netcracker-cbm",
+          "to": "ms-comp-netcracker-cbm-rest",
+          "label": "conexión"
+        }
+      ],
+      "confidence": 0.85,
+      "reasoning": "El diagrama muestra claramente componentes y relaciones entre ellos, lo que permite identificar la arquitectura del sistema. Se observan cambios significativos entre la arquitectura actual y la propuesta, lo que indica un enfoque en la mejora de la modularidad y la validación de datos."
+    },
+    {
+      "diagram_id": "img-009",
+      "image_path": "C:\\INDRA\\APL-Agente-ms\\APL-agente-planificador\\out\\ODTT-32586\\diagrams\\img-009.png",
+      "image_sha256": "2ecc490228fe077ac8c98ddf1860f4c3d27d37cde525cbbda4483f05d62a5193",
+      "page": null,
+      "near_section": null,
+      "detected_kind": "architecture",
+      "description": "El diagrama presenta una comparación entre la arquitectura actual y la propuesta para un sistema de consulta de tipo de usuario. En la arquitectura actual, se observa un flujo de datos que incluye un servicio SOAP y un servicio REST, con validaciones de encabezado y acceso a una base de datos relacional (RDB). La propuesta introduce una nueva biblioteca de validación y un enfoque más modular, separando las validaciones y mejorando la interacción entre los servicios. Se destacan los componentes como 'ms-user-customertypequery' y 'ms-comp-nettrackerb', que son esenciales para el funcionamiento del sistema. La transición de SOAP a REST se sugiere para optimizar el rendimiento y la escalabilidad del sistema.",
+      "extracted_entities": [
+        "APL-MSUserCustomerTypeQuery-Soap",
+        "ms-header-validator-rest",
+        "ms-user-customertypequery",
+        "ms-comp-nettrackerb",
+        "RDB",
+        "lib-header-validate"
+      ],
+      "extracted_relations": [
+        {
+          "from": "APL-MSUserCustomerTypeQuery-Soap",
+          "to": "ms-header-validator-rest",
+          "label": "validates"
+        },
+        {
+          "from": "ms-header-validator-rest",
+          "to": "RDB",
+          "label": "accesses"
+        },
+        {
+          "from": "APL-MSUserCustomerTypeQuery-Soap",
+          "to": "lib-header-validate",
+          "label": "uses"
+        }
+      ],
+      "confidence": 0.85,
+      "reasoning": "El diagrama muestra claramente la arquitectura de un sistema, con componentes y relaciones bien definidas. Se identifican entidades y flujos de datos, lo que permite clasificarlo como un diagrama de arquitectura."
+    }
+  ],
+  "microservices": [
+    {
+      "name": "ms-customer-retrievebalancebuckets",
+      "type": "HYBRID",
+      "purpose": null,
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        },
+        {
+          "kind": "diagram",
+          "chunk_id": null,
+          "diagram_id": "img-007",
+          "section": "Diagrama de Arquitectura y su relación con otros sistemas",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "name": "ms-customer-retrieveaccountbalanceinfo",
+      "type": "HYBRID",
+      "purpose": null,
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        },
+        {
+          "kind": "diagram",
+          "chunk_id": null,
+          "diagram_id": "img-008",
+          "section": "Diagrama de Arquitectura y su relación con otros sistemas",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "name": "ms-user-customertypequery-soap",
+      "type": "HYBRID",
+      "purpose": null,
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        },
+        {
+          "kind": "diagram",
+          "chunk_id": null,
+          "diagram_id": "img-009",
+          "section": "Diagrama de Arquitectura y su relación con otros sistemas",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "name": "ms-comp-netcrackerrdb",
+      "type": "REST",
+      "purpose": null,
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "name": "ms-comp-sdp-balancequery-rest",
+      "type": "REST",
+      "purpose": null,
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "name": "ms-comp-redis-rest",
+      "type": "REST",
+      "purpose": null,
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "name": "ms-header-validation-rest",
+      "type": "REST",
+      "purpose": null,
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    }
+  ],
+  "libraries": [
+    {
+      "group_id": null,
+      "artifact_id": "lib-comp-sdp-balancequery-adapt",
+      "current_version": "2.0.0",
+      "target_version": null,
+      "classification": "adapter",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "artifact_id": "lib-comp-redis-adapt",
+      "current_version": "2.0.0",
+      "target_version": null,
+      "classification": "adapter",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "artifact_id": "lib-comp-netcracker-cbm-adapt",
+      "current_version": "2.0.0",
+      "target_version": null,
+      "classification": "adapter",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "group_id": null,
+      "artifact_id": "lib-header-validation-adapt",
+      "current_version": null,
+      "target_version": null,
+      "classification": "adapter",
+      "evidence": [
+        {
+          "kind": "text",
+          "chunk_id": null,
+          "diagram_id": null,
+          "section": "Estrategia de Solución",
+          "page": 5
+        }
+      ]
+    }
+  ],
+  "dtos": [],
+  "adapters": [],
+  "contracts": [],
+  "oracle_objects": [],
+  "redis_usages": [],
+  "config_changes": [],
+  "pipelines": [],
+  "rules": [],
+  "problem_understanding": "El objetivo de la migración es actualizar los microservicios existentes de un sistema basado en un bus a una arquitectura más moderna utilizando Java OPENJDK 25 LTS, Spring Boot 4 y Redis 8. Este proceso implica la migración de librerías comunes y microservicios a nuevos arquetipos, asegurando que todos los componentes funcionen correctamente en un entorno de pre-producción. Las restricciones incluyen la disponibilidad de los ambientes de microservicios y bases de datos, así como la necesidad de datos de prueba adecuados. El stack tecnológico se centra en Java, Spring Boot y Redis, con un enfoque en la modularidad y la eficiencia en la interacción entre servicios y bases de datos.",
+  "open_questions": []
+}
