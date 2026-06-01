@@ -1,0 +1,11 @@
+ec\otecel\digercicservice\Application.class
+ec\otecel\digercicservice\util\LoggingUtilities.class
+ec\otecel\digercicservice\util\BasicOperationController.class
+ec\otecel\digercicservice\util\ErrorTOpenApiProperties.class
+ec\otecel\digercicservice\util\ErrorMappingProperties.class
+ec\otecel\digercicservice\util\ServiceErrorMapping.class
+ec\otecel\digercicservice\util\BasicOperationService.class
+ec\otecel\digercicservice\constants\MsConstants.class
+ec\otecel\digercicservice\util\BasicOperationAdapter.class
+ec\otecel\digercicservice\util\CommonUtil.class
+ec\otecel\digercicservice\exception\GlobalExceptionHandler.class

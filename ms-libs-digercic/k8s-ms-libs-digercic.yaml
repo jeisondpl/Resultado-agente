@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-libs-digercic-deployment
+  namespace: ms-middleware
+  labels:
+    event: ms-libs-digercic
+  annotations:
+    path-url-project-properties: otecel/G-Microservicios/G-MSComponents/APL-MSCustomerCheckInvoice/-/tree/master/ms-libs-digercic/src/main/resources
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      event: ms-libs-digercic
+  template:
+    metadata:
+      labels:
+        event: ms-libs-digercic
+    spec:
+      containers:
+        - 
+          image: 10.112.230.33:443/telefonica/g-microservicios/ms-libs-digercic:1.0.0-qa
+          name: ms-libs-digercic
+          imagePullPolicy: Always
+          securityContext:
+            runAsGroup: 1000
+          env:
+          - name: TZ
+            value: America/Bogota
+          - name: JAVA_OPTS
+            value: '-Dlog4j2.formatMsgNoLookups=true'
+          resources:
+            limits:
+              memory: 1024Mi
+            requests:
+              memory: 128Mi
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/ms/ms-libs-digercic/application.properties
+              subPath: application.properties      
+            - name: ms-logs-volume
+              mountPath: /opt/log/
+            - name: config-volume-log
+              mountPath: /opt/ms/ms-libs-digercic/log4j2.xml
+              subPath: log4j2.xml
+      volumes:
+        - name: ms-logs-volume
+          hostPath:
+            path: /datos/logs/ms/
+        - name: config-volume
+          configMap:
+            name: ms-libs-digercic-configmap
+        - name: config-volume-log
+          configMap:
+            name: ms-libs-digercic-configmap-log
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-libs-digercic-service
+  namespace: ms-middleware
+  labels:
+    event: ms-libs-digercic
+spec:
+  ports:
+    -
+      port: 8080
+      targetPort: 8080
+  selector:
+    event: ms-libs-digercic
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ms-libs-digercic-hpa
+  namespace: ms-middleware
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ms-libs-digercic-deployment
+  minReplicas: 2
+  maxReplicas: 2
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70
+
