@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: PathPrefix(`/digercicservice/DigercicService`)
+  - match: PathPrefix(`/digercic/Digercic`)
     kind: Rule
     services:
     - name: ms-libs-digercic-service
